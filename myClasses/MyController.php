@@ -28,11 +28,11 @@ class MyController
                     [
                         [
                             "title" => "Maks",
-//                            "age" => 27,
+                            "age" => 27,
                         ],
                         [
                             "title" => "Nastya",
-//                            "age" => 28,
+                            "age" => 28,
                         ]
                     ]
             ];

@@ -5,11 +5,12 @@
 <h1>Максим Пух, тестовое задание для бекенд(фуллстек)-разработчиков.</h1>
 <div id="app">
     <ul>
-        <li v-for="test in products">
-            {{ test.title }}
+        <li v-for="product in products">
+            {{ product.title }}
+            <button @click="editNews(product)">Изменить!</button>
         </li>
     </ul>
-    <button @click="products.push({title: 'Новая новость'})">
+    <button @click="addNews">
         Добавить
     </button>
 </div>
@@ -26,8 +27,18 @@
             .then(json => {
                 this.products = json.products
             })
+        },
+        methods: {
+            addNews: function (e) {
+                this.products.push({title: 'Новая новость'});
+            },
+            editNews: function (e) {
+                console.log(e.title);
+                console.log(e.age);
+                // alert(this)
+            }
         }
-    })
+    });
 </script>
 </body>
 </html>
