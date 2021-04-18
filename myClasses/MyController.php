@@ -24,13 +24,15 @@ class MyController
     {
         if ($req == "test") {
             $test_arr = [
-                "products" =>
+                "news" =>
                     [
                         [
+                            "id" => 1,
                             "title" => "Maks",
                             "age" => 27,
                         ],
                         [
+                            "id" => 2,
                             "title" => "Nastya",
                             "age" => 28,
                         ]
