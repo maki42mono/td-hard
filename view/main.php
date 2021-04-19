@@ -5,20 +5,31 @@
 <h1>Максим Пух, тестовое задание для бекенд(фуллстек)-разработчиков.</h1>
 <div id="app">
     <ul>
-        <li v-for="cur_news in news">
-            {{ cur_news.title }} {{ cur_news.age }}
-            <button @click="editNews(cur_news)">Изменить!</button>
+        <li v-for="newsItem in news">
+            <span v-if="newsItem.isDraft">(Ч)</span>
+            {{ newsItem.title }} {{ newsItem.publishedDate }} {{ newsItem.descriptionShort }} <br>
+            {{ newsItem.descriptionLong }}
+            <button @click="editNews(newsItem)">Изменить!</button><br>
+            <img style="max-height: 70px;" :src="'/src/images/' + newsItem.image">
+            <br><br>
         </li>
     </ul>
     <button @click="addNews">
         Добавить
     </button>
     <dialog ref="modal" close>
-        <div v-if="news_to_edit !== null">
-            <input type="text" v-model="news_to_edit.title">
-            <input type="number" v-model="news_to_edit.age">
-            <button @click="saveModal(news_to_edit)">Сохранить и закрыть</button>
-            <button @click="closeModal">Закрыть</button>
+        <div v-if="newsItemEditable !== null">
+            <input type="text" v-model="newsItemEditable.title">
+            <input type="date" v-model="newsItemEditable.publishedDate">
+            <input type="text" v-model="newsItemEditable.descriptionShort">
+            <input type="checkbox" id="is_draft" v-model="newsItemEditable.isDraft">
+            <label for="is_draft">Черновик</label>
+            <button @click="saveModal(newsItemEditable)">Сохранить и закрыть</button>
+            <button @click="closeModal">Закрыть</button><br>
+            <textarea>{{ newsItemEditable.descriptionLong }}</textarea>
+            <img style="max-height: 70px;"
+                 :src="(hasLoadedImage ? '' : '/src/images/') + newsItemEditable.image">
+            <input type="file" id="file" ref="modalFile" @change="uploadFile(newsItemEditable)">
         </div>
 
     </dialog>
@@ -27,35 +38,36 @@
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
 <script>
-    var sort_id = 1;
-    var new_id = -1;
+    var sortId = 1;
+    var newId = -1;
 
     const app = new Vue({
         el: '#app',
         data: {
             news: null,
-            news_to_edit: null,
+            newsItemEditable: null,
+            hasLoadedImage: false
         },
         created () {
             fetch('/test')
             .then(response => response.json())
             .then(json => {
                 this.news = json.news;
-                this.news.forEach(obj => obj.sort_id = sort_id++);
+                this.news.forEach(obj => obj.sortId = sortId++);
             });
         },
         methods: {
             addNews: function () {
-                this.news_to_edit = {
+                this.newsItemEditable = {
                     title: 'Новая новость',
-                    sort_id: sort_id++,
-                    new_id: new_id--
+                    sortId: sortId++,
+                    newId: newId--
                 };
                 var modal = this.$refs['modal'];
                 modal.showModal();
             },
             editNews: function (e) {
-                this.news_to_edit = Object.assign({}, e);
+                this.newsItemEditable = Object.assign({}, e);
                 var modal = this.$refs['modal'];
                 modal.showModal();
             },
@@ -63,14 +75,26 @@
                 this.news = this.news.filter(obj => obj.id !== e.id);
                 this.news.push(e);
                 this.news.sort((a, b) => {
-                   return a.sort_id - b.sort_id;
+                   return a.sortId - b.sortId;
                 });
                 var modal = this.$refs['modal'];
                 modal.close();
             },
             closeModal: function () {
                 var modal = this.$refs['modal'];
+                this.hasLoadedImage = false;
                 modal.close();
+            },
+            uploadFile: function () {
+                var file = this.$refs['modalFile'].files;
+                var reader = new FileReader();
+                reader.readAsDataURL(file[0]);
+                var that = this;
+                reader.onload = function () {
+                    console.log(that);
+                    that.hasLoadedImage = true;
+                    that.newsItemEditable.image = reader.result;
+                };
             }
         }
     });

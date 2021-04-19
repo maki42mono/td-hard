@@ -29,12 +29,20 @@ class MyController
                         [
                             "id" => 1,
                             "title" => "Maks",
-                            "age" => 27,
+                            "descriptionShort" => "aaa",
+                            "descriptionLong" => "aaaAAAaaa",
+                            "publishedDate" => "2020-10-08",
+                            "isDraft" => false,
+                            "image" => "banana.jpg",
                         ],
                         [
                             "id" => 2,
                             "title" => "Nastya",
-                            "age" => 28,
+                            "descriptionShort" => "bbb",
+                            "descriptionLong" => "bbbBBBbb",
+                            "publishedDate" => "2019-03-18",
+                            "isDraft" => true,
+                            "image" => "apple.jpg",
                         ]
                     ]
             ];
