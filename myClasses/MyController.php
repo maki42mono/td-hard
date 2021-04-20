@@ -7,6 +7,7 @@ namespace myClasses;
 class MyController
 {
     private const VIEW_PATH = __DIR__ . "/../view";
+    private const IMAGE_PATH = __DIR__ . "/../src/image";
 
     public static function run()
     {
@@ -50,8 +51,13 @@ class MyController
             echo json_encode($test_arr);
         } else if ($req == "sendData") {
             $data = json_decode(file_get_contents('php://input'), true);
-            echo json_encode([$data]);
 
+
+            $file_data = $data["image"];
+            $extension = explode('/', mime_content_type($file_data))[1];
+            $location = self::IMAGE_PATH . "/" . time() . ".{$extension}";
+            file_put_contents($location, file_get_contents($file_data));
+            echo json_encode([$data]);
         }
         exit;
     }

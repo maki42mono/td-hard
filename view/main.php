@@ -10,7 +10,7 @@
             {{ newsItem.title }} {{ newsItem.publishedDate }} {{ newsItem.descriptionShort }} <br>
             {{ newsItem.descriptionLong }}
             <button @click="editNews(newsItem)">Изменить!</button><br>
-            <img style="max-height: 70px;" :src="'/src/images/' + newsItem.image">
+            <img style="max-height: 70px;" :src="'/src/image/' + newsItem.image">
             <br><br>
         </li>
     </ul>
@@ -28,7 +28,7 @@
             <button @click="closeModal">Закрыть</button><br>
             <textarea>{{ newsItemEditable.descriptionLong }}</textarea>
             <img style="max-height: 70px;"
-                 :src="(hasLoadedImage ? '' : '/src/images/') + newsItemEditable.image">
+                 :src="(hasLoadedImage ? '' : '/src/image/') + newsItemEditable.image">
             <input type="file" id="file" ref="modalFile" @change="uploadFile(newsItemEditable)">
         </div>
 
@@ -46,15 +46,13 @@
         data: {
             news: null,
             newsItemEditable: null,
-            hasLoadedImage: false
+            hasLoadedImage: false,
+            uploadedImage: null,
         },
-        created () {
-            fetch('/getData')
-            .then(response => response.json())
-            .then(json => {
-                this.news = json.news;
-                this.news.forEach(obj => obj.sortId = sortId++);
-            });
+        async created () {
+            const response = await fetch("/getData");
+            const data = await response.json();
+            this.news = data.news;
         },
         methods: {
             addNews: function () {
@@ -78,12 +76,13 @@
                 this.news.sort((a, b) => {
                    return a.sortId - b.sortId;
                 });
+                // that.newsItemEditable.image = that.uploadedImage;
 
                 // Simple POST request with a JSON body using fetch
                 const requestOptions = {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
+                        "Content-Type": "multipart/form-data",
                     },
                     body: JSON.stringify(that.newsItemEditable)
                 };
@@ -100,10 +99,11 @@
                 modal.close();
             },
             uploadFile: function () {
-                var file = this.$refs['modalFile'].files;
-                var reader = new FileReader();
-                reader.readAsDataURL(file[0]);
                 var that = this;
+                var file = this.$refs['modalFile'].files[0];
+                var reader = new FileReader();
+                reader.readAsDataURL(file);
+                that.uploadedImage = file;
                 reader.onload = function () {
                     that.hasLoadedImage = true;
                     that.newsItemEditable.image = reader.result;
