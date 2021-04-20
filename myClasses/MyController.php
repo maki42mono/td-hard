@@ -11,6 +11,9 @@ class MyController
 
     private function __construct()
     {
+        $registry = Registry::instance();
+        var_dump($registry->get("db"));
+
         if (isset($_REQUEST["r"])) {
             $req = $_REQUEST["r"];
             $this->AJAXHandler($req);
