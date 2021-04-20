@@ -22,7 +22,7 @@ class MyController
 
     private static function AJAXHandler($req)
     {
-        if ($req == "test") {
+        if ($req == "getData") {
             $test_arr = [
                 "news" =>
                     [
@@ -48,6 +48,10 @@ class MyController
             ];
 
             echo json_encode($test_arr);
+        } else if ($req == "sendData") {
+            $data = json_decode(file_get_contents('php://input'), true);
+            echo json_encode([$data]);
+
         }
         exit;
     }

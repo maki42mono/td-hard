@@ -49,7 +49,7 @@
             hasLoadedImage: false
         },
         created () {
-            fetch('/test')
+            fetch('/getData')
             .then(response => response.json())
             .then(json => {
                 this.news = json.news;
@@ -71,14 +71,28 @@
                 var modal = this.$refs['modal'];
                 modal.showModal();
             },
-            saveModal: function (e) {
+            async saveModal(e) {
+                var that = this;
                 this.news = this.news.filter(obj => obj.id !== e.id);
                 this.news.push(e);
                 this.news.sort((a, b) => {
                    return a.sortId - b.sortId;
                 });
-                var modal = this.$refs['modal'];
-                modal.close();
+
+                // Simple POST request with a JSON body using fetch
+                const requestOptions = {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(that.newsItemEditable)
+                };
+                console.log(requestOptions);
+                const response = await fetch("/sendData", requestOptions);
+                const data = await response.json();
+                console.log(data);
+
+
             },
             closeModal: function () {
                 var modal = this.$refs['modal'];
@@ -91,7 +105,6 @@
                 reader.readAsDataURL(file[0]);
                 var that = this;
                 reader.onload = function () {
-                    console.log(that);
                     that.hasLoadedImage = true;
                     that.newsItemEditable.image = reader.result;
                 };
