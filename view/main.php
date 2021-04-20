@@ -87,7 +87,7 @@
                     body: JSON.stringify(that.newsItemEditable)
                 };
                 console.log(requestOptions);
-                const response = await fetch("/sendData", requestOptions);
+                const response = await fetch("/saveData", requestOptions);
                 const data = await response.json();
                 console.log(data);
 
