@@ -9,35 +9,30 @@ class MyController
     private const VIEW_PATH = __DIR__ . "/../view";
     private const IMAGE_PATH = __DIR__ . "/../src/image";
 
-    private function __construct()
+    public static function run()
     {
         $registry = Registry::instance();
-        var_dump($registry->get("db"));
 
         if (isset($_REQUEST["r"])) {
             $req = $_REQUEST["r"];
-            $this->AJAXHandler($req);
+           self::AJAXHandler($req);
         }
 
-        $this->runMyView("main");
+       self::runMyView("main");
     }
 
-    public static function run()
-    {
-        new self();
-    }
-
-    private function AJAXHandler($req)
+    private static function AJAXHandler($req)
     {
         $action = "action{$req}";
-        if (method_exists(get_class($this), $action)) {
-            $this->$action();
+        $rself = new \ReflectionClass(self::class);
+        if ($rself->hasMethod($action)) {
+           self::$action();
         }
 
         exit;
     }
 
-    private function actionSaveData() {
+    private static function actionSaveData() {
         $data = json_decode(file_get_contents('php://input'), true);
 
 
@@ -48,7 +43,7 @@ class MyController
         echo json_encode([$data]);
     }
 
-    private function actionGetData() {
+    private static function actionGetData() {
         $test_arr = [
             "news" =>
                 [
@@ -76,19 +71,19 @@ class MyController
         echo json_encode($test_arr);
     }
 
-    private function runMyView($view_name)
+    private static function runMyView($view_name)
     {
         $path = self::VIEW_PATH . "/{$view_name}.php";
         $path = str_replace("/", DIRECTORY_SEPARATOR, $path);
         if (file_exists($path)) {
             include_once($path);
         } else {
-            $this->runError();
+           self::runError();
         }
         exit;
     }
 
-    private function runError()
+    private static function runError()
     {
         echo "<h2>Такой страницы нет!</h2>";
     }
