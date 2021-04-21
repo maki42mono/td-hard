@@ -45,35 +45,24 @@ class MyController
         $extension = explode('/', mime_content_type($file_data))[1];
         $location = self::IMAGE_PATH . "/" . time() . ".{$extension}";
         file_put_contents($location, file_get_contents($file_data));
-//        echo json_encode([$data]);
     }
 
     private static function actionGetData() {
-        $test_arr = [
-            "news" =>
-                [
-                    [
-                        "id" => 1,
-                        "title" => "Maks",
-                        "descriptionShort" => "aaa",
-                        "descriptionLong" => "aaaAAAaaa",
-                        "publishedDate" => "2020-10-08",
-                        "isDraft" => false,
-                        "image" => "banana.jpg",
-                    ],
-                    [
-                        "id" => 2,
-                        "title" => "Nastya",
-                        "descriptionShort" => "bbb",
-                        "descriptionLong" => "bbbBBBbb",
-                        "publishedDate" => "2019-03-18",
-                        "isDraft" => true,
-                        "image" => "apple.jpg",
-                    ]
-                ]
-        ];
 
-        echo json_encode($test_arr);
+        $news_mapper = new NewsMapper();
+        $all_news = $news_mapper->findAll();
+
+        $all_news_arr = [];
+        foreach ($all_news as $news) {
+            $news_arr = $news->attributes;
+            $curr_news = [];
+            foreach ($news_arr as $key => $value) {
+                $curr_news[NewsModel::ATTR_PARAMS[$key]["front_name"]] = $value;
+            }
+            $all_news_arr[] = $curr_news;
+        }
+
+        echo json_encode(["news" => $all_news_arr]);
     }
 
     private static function runMyView($view_name)

@@ -8,10 +8,14 @@ class Registry
 {
     private static $instance = null;
     private $values;
+    private $pdo;
 
     private function __construct()
     {
         $this->getConf();
+
+        $db_conf = $this->values["db"];
+        $this->pdo = new \PDO("{$db_conf["type"]}:host={$db_conf["host"]};dbname={$db_conf["db_name"]}", $db_conf["username"], $db_conf["password"]);
 
         return $this;
     }
@@ -43,5 +47,10 @@ class Registry
         } else {
             throw new \Exception("Создайте файл /config/main-local.php");
         }
+    }
+
+    public function getPdo()
+    {
+        return $this->pdo;
     }
 }

@@ -4,50 +4,56 @@
 namespace myClasses;
 
 
-class NewsModel
+class NewsModel extends DomainObject
 {
     public $attributes = [];
     public const ATTR_PARAMS = [
         "id" => [
             "label" => "ID",
-            "db_column_name" => "id",
-    	],
+            "front_name" => "id",
+        ],
         "title" => [
             "label" => "Заголовок",
-            "db_column_name" => "title",
-    	],
-        "descriptionShort" => [
+            "front_name" => "title",
+        ],
+        "description_short" => [
             "label" => "Краткое описание",
-            "db_column_name" => "description_short",
-    	],
-        "descriptionLong" => [
+            "front_name" => "descriptionShort",
+        ],
+        "description_long" => [
             "label" => "Основное описание",
-            "db_column_name" => "description_long",
-    	],
-        "publishedDate" => [
+            "front_name" => "descriptionLong",
+        ],
+        "published_date" => [
             "label" => "Дата публикации",
-            "db_column_name" => "published_date",
-    	],
-        "image" => [
+            "front_name" => "publishedDate",
+        ],
+        "img_name" => [
             "label" => "Картинка",
-            "db_column_name" => "img_name",
-    	],
-        "isDraft" => [
+            "front_name" => "image",
+        ],
+        "flag_draft" => [
             "label" => "Черновик",
-            "db_column_name" => "flag_draft",
-    	],
+            "front_name" => "isDraft",
+        ],
         "created" => [
             "label" => "Дата добавления",
-            "db_column_name" => "created",
-    	],
+            "front_name" => "created",
+        ],
         "updated" => [
             "label" => "Дата изменения",
-            "db_column_name" => "updated",
-    	],
+            "front_name" => "updated",
+        ],
     ];
 
     public function __construct($attributes = [])
     {
+        if (isset($attributes["id"])) {
+            parent::__construct($attributes["id"]);
+        } else {
+            parent::__construct();
+        }
+
         if (isset($attributes)) {
             foreach ($attributes as $key => $value) {
                 if (isset(self::ATTR_PARAMS[$key])) {
