@@ -15,6 +15,10 @@ class NewsMapper extends Mapper
         $this->select_all_stmt = $this->pdo->prepare(
             "SELECT * FROM news"
         );
+
+        $this->update_stmt = $this->pdo->prepare(
+            "UPDATE news SET ? WHERE id=?"
+        );
     }
 
     protected function doCreateObject(array $raw): DomainObject

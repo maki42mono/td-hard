@@ -6,7 +6,6 @@ namespace myClasses;
 
 class NewsModel extends DomainObject
 {
-    public $attributes = [];
     public const ATTR_PARAMS = [
         "id" => [
             "label" => "ID",
@@ -46,7 +45,7 @@ class NewsModel extends DomainObject
         ],
     ];
 
-    public function __construct($attributes = [])
+    public function __construct(array $attributes = [], bool $from_front = false)
     {
         if (isset($attributes["id"])) {
             parent::__construct($attributes["id"]);
@@ -56,10 +55,30 @@ class NewsModel extends DomainObject
 
         if (isset($attributes)) {
             foreach ($attributes as $key => $value) {
-                if (isset(self::ATTR_PARAMS[$key])) {
-                    $this->attributes[$key] = $value;
+                $my_key = $key;
+//                Если данные пришли с фронта — меняем соответствующие поля с фронта на БД
+                if ($from_front) {
+                    $my_key = array_search($my_key, array_column(self::ATTR_PARAMS, 'front_name'));
+                    $my_key = array_keys(self::ATTR_PARAMS)[$my_key];
+                }
+                if (isset(self::ATTR_PARAMS[$my_key])) {
+                    $this->attributes[$my_key] = $value;
                 }
             }
         }
+    }
+
+    public static function findAll()
+    {
+        $news_mapper = new NewsMapper();
+        $all_news = $news_mapper->findAll();
+
+        return $all_news;
+    }
+
+    public function save()
+    {
+        $news_mapper = new NewsMapper();
+        $news_mapper->update($this);
     }
 }

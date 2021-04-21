@@ -36,8 +36,9 @@ class MyController
         $data = json_decode(file_get_contents('php://input'), true);
 
         if (isset($data)) {
-            $news_model = new NewsModel($data);
-            var_dump($news_model->attributes);
+            $news_model = new NewsModel($data, true);
+            $news_model->save();
+//            var_dump($news_model->attributes);
         }
 
 //todo: вынести отдельно
@@ -49,8 +50,7 @@ class MyController
 
     private static function actionGetData() {
 
-        $news_mapper = new NewsMapper();
-        $all_news = $news_mapper->findAll();
+        $all_news = NewsModel::findAll();
 
         $all_news_arr = [];
         foreach ($all_news as $news) {

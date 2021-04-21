@@ -8,6 +8,7 @@ abstract class Mapper
 {
     protected $pdo;
     protected $select_all_stmt;
+    protected $update_stmt;
 
     public function __construct()
     {
@@ -37,6 +38,32 @@ abstract class Mapper
     protected function selectAllStmt()
     {
         return $this->select_all_stmt;
+    }
+
+    public function update(DomainObject $object)
+    {
+        if (is_array($object->attributes)) {
+            $update_values = "";
+            $is_first = true;
+            $delim = "";
+            foreach ($object->attributes as $key => $value) {
+                if (isset($value) && !is_null($value) && $key != "id") {
+                    $update_values .= "{$delim}{$key} = '$value'";
+                    if ($is_first) {
+                        $is_first = false;
+                        $delim = ", ";
+                    }
+                }
+            }
+        }
+        var_dump([$update_values, $object->getId()]);
+        $this->updateStmt()->execute([$update_values, $object->getId()]);
+
+    }
+
+    protected function updateStmt()
+    {
+        return $this->update_stmt;
     }
 
 //    abstract protected function targetClass(): string;

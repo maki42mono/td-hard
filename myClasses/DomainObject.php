@@ -6,6 +6,7 @@ namespace myClasses;
 
 abstract class DomainObject
 {
+    public $attributes = [];
     private $id;
 
     public function __construct($id = null)
