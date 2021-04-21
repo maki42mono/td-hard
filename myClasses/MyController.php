@@ -11,7 +11,7 @@ class MyController
 
     public static function run()
     {
-        $registry = Registry::instance();
+        Registry::instance();
 
         if (isset($_REQUEST["r"])) {
             $req = $_REQUEST["r"];
@@ -35,12 +35,17 @@ class MyController
     private static function actionSaveData() {
         $data = json_decode(file_get_contents('php://input'), true);
 
+        if (isset($data)) {
+            $news_model = new NewsModel($data);
+            var_dump($news_model->attributes);
+        }
 
+//todo: вынести отдельно
         $file_data = $data["image"];
         $extension = explode('/', mime_content_type($file_data))[1];
         $location = self::IMAGE_PATH . "/" . time() . ".{$extension}";
         file_put_contents($location, file_get_contents($file_data));
-        echo json_encode([$data]);
+//        echo json_encode([$data]);
     }
 
     private static function actionGetData() {
