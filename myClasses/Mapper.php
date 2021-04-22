@@ -14,6 +14,7 @@ abstract class Mapper
     {
         $reg = Registry::instance();
         $this->pdo = $reg->getPdo();
+//        $this->pdo->setAttribute( \PDO::ATTR_EMULATE_PREPARES, false );
     }
 
 //    todo: тут нужно работать с коллекциями, но это дольше
@@ -56,8 +57,14 @@ abstract class Mapper
                 }
             }
         }
-        var_dump([$update_values, $object->getId()]);
-        $this->updateStmt()->execute([$update_values, $object->getId()]);
+
+        $this->update_stmt = $this->pdo->prepare(
+            "UPDATE news SET {$update_values} WHERE id={$object->getId()}"
+        );
+
+        $res = $this->updateStmt()->execute();
+
+        $this->updateStmt()->debugDumpParams();
 
     }
 

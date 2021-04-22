@@ -36,16 +36,20 @@ class MyController
         $data = json_decode(file_get_contents('php://input'), true);
 
         if (isset($data)) {
+
+            //todo: вынести отдельно
+            $file_data = $data["image"];
+            $extension = explode('/', mime_content_type($file_data))[1];
+            $file_name = time() . "." . $extension;
+            $location = self::IMAGE_PATH . "/{$file_name}";
+            file_put_contents($location, file_get_contents($file_data));
+            $data["image"] = $file_name;
+
             $news_model = new NewsModel($data, true);
             $news_model->save();
-//            var_dump($news_model->attributes);
         }
 
-//todo: вынести отдельно
-        $file_data = $data["image"];
-        $extension = explode('/', mime_content_type($file_data))[1];
-        $location = self::IMAGE_PATH . "/" . time() . ".{$extension}";
-        file_put_contents($location, file_get_contents($file_data));
+
     }
 
     private static function actionGetData() {
