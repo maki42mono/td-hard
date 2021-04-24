@@ -38,8 +38,18 @@ abstract class DomainObject
             $mapper->save($this);
         }
 
-
         return true;
+    }
+
+    public function delete(): bool
+    {
+        $mapper = $this->targetMapper();
+        if (! isset($this->id)) {
+            return false;
+        }
+
+        return $mapper->delete($this);
+
     }
 
     abstract protected static function targetMapper(): Mapper;

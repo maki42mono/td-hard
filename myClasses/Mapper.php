@@ -83,9 +83,7 @@ abstract class Mapper
         if (! is_array($object->attributes)) {
             throw new \Exception();
         }
-        
 
-        
         $sql_value_names = "";
         $sql_new_values = "";
         $is_first = true;
@@ -105,11 +103,24 @@ abstract class Mapper
             ->prepare("INSERT INTO {$this->table_name} ({$sql_value_names}) VALUES ({$sql_new_values})");
         $res = $sth->execute();
         $object->setId($this->pdo->lastInsertId());
-//        $object->attributes["id"] = ;
 
 //        $sth->debugDumpParams();
 
         return $res;
+    }
+
+    public function delete(DomainObject $object): bool
+    {
+        if ($object->getId() == null) {
+            throw new \Exception();
+        }
+
+        $sth = $this->pdo
+            ->prepare("DELETE FROM {$this->table_name} WHERE id={$object->getId()}");
+        $res = $sth->execute();
+
+        return $res;
+
     }
 
     protected function updateStmt()

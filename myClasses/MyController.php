@@ -47,9 +47,7 @@ class MyController
 
             if ($news_model->save()) {
                 $news_model->attributes["id"] = $news_model->getId();
-//                var_dump($news_model);
                 $news_to_front = [];
-//
                 foreach ($news_model->attributes as $key => $value) {
                     $news_to_front[NewsModel::ATTR_PARAMS[$key]["front_name"]] = $value;
                 }
@@ -57,8 +55,16 @@ class MyController
                 echo json_encode($news_to_front);
             }
         }
+    }
 
+    private static function actionDeleteData() {
+        $post_data = json_decode(file_get_contents('php://input'), true);
+        $news_data = $post_data["newsData"];
+        $news_model = new NewsModel($news_data, true);
 
+        if ($news_model->delete()) {
+            echo json_encode(["msg" => "OK!"]);
+        }
     }
 
     private static function actionGetData() {

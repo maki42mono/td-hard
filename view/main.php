@@ -10,6 +10,7 @@
             {{ newsItem.title }} {{ newsItem.publishedDate }} {{ newsItem.descriptionShort }} <br>
             {{ newsItem.descriptionLong }}
             <button @click="editNews(newsItem)">Изменить!</button><br>
+            <button @click="deleteNews(newsItem)">Удалить…</button><br>
             <img style="max-height: 70px;" :src="'/src/image/' + newsItem.image">
             <br><br>
         </li>
@@ -79,14 +80,26 @@
                 var modal = this.$refs['modal'];
                 modal.showModal();
             },
-            async saveModal(e) {
+            async deleteNews(e) {
+                const requestOptions = {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                    body: JSON.stringify({newsData: e})
+                };
+                const response = await fetch("/deleteData", requestOptions);
+                if (response.status == 200) {
+                    this.news = this.news.filter(obj => obj.id != e.id);
+                }
+            },
+            async saveModal() {
                 if (await this.saveNewsItem()) {
                     app.closeModal();
                 }
             },
             async saveNewsItem () {
                 var that = this;
-                console.log(that.newsItemEditable);
                 const requestOptions = {
                     method: "POST",
                     headers: {
@@ -98,9 +111,9 @@
                 //todo: делать красивее
                 if (response.status == 200) {
                     var savedNews = await response.json();
-                    console.log(savedNews);
                     this.news = this.news.filter(obj => obj.id != savedNews.id);
                     savedNews.sortId = that.newsItemEditable.sortId;
+                    this.newsItemEditable.image = savedNews.image;
                     this.news.push(savedNews);
                     this.news.sort((a, b) => {
                         return a.sortId - b.sortId;
