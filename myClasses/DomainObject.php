@@ -24,10 +24,12 @@ abstract class DomainObject
         return $mapper->findAll();
     }
 
-    public function save()
+    public function save(): bool
     {
         $mapper = $this->targetMapper();
         $mapper->update($this);
+
+        return true;
     }
 
     abstract protected static function targetMapper(): Mapper;

@@ -71,27 +71,27 @@
             },
             async saveModal(e) {
                 var that = this;
-                this.news = this.news.filter(obj => obj.id !== e.id);
-                this.news.push(e);
-                this.news.sort((a, b) => {
-                   return a.sortId - b.sortId;
-                });
-                // that.newsItemEditable.image = that.uploadedImage;
-
-                // Simple POST request with a JSON body using fetch
                 const requestOptions = {
                     method: "POST",
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
-                    body: JSON.stringify(that.newsItemEditable)
+                    body: JSON.stringify({newsData: that.newsItemEditable, hasNewImage: this.hasLoadedImage})
                 };
                 console.log(requestOptions);
                 const response = await fetch("/saveData", requestOptions);
                 const data = await response.json();
                 console.log(data);
+                if (data.status == 200) {
 
-
+                    e.image = data.imageName;
+                    this.news = this.news.filter(obj => obj.id !== e.id);
+                    this.news.push(e);
+                    this.news.sort((a, b) => {
+                        return a.sortId - b.sortId;
+                    });
+                    app.closeModal();
+                }
             },
             closeModal: function () {
                 var modal = this.$refs['modal'];

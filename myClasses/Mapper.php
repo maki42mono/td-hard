@@ -70,9 +70,6 @@ abstract class Mapper
         );
 
         $res = $this->updateStmt()->execute();
-
-        $this->updateStmt()->debugDumpParams();
-
     }
 
     protected function updateStmt()
