@@ -6,6 +6,7 @@ namespace myClasses;
 
 class NewsModel extends DomainObject
 {
+//    todo: вынести в функцию и в низ класса
     public const ATTR_PARAMS = [
         "id" => [
             "label" => "ID",
@@ -68,17 +69,30 @@ class NewsModel extends DomainObject
         }
     }
 
-    public static function findAll()
-    {
-        $news_mapper = new NewsMapper();
-        $all_news = $news_mapper->findAll();
+//    todo: вынести в домейн обджект, а тут добавить класс таргет!
+//      todo: и добавить проверки перед сохранением!
+//    public static function findAll()
+//    {
+//        $news_mapper = new NewsMapper();
+//        $all_news = $news_mapper->findAll();
+//
+//        return $all_news;
+//    }
 
-        return $all_news;
+    public static function findAll(): array
+    {
+        $mapper = self::targetMapper();
+        return parent::findAllByMapper($mapper);
     }
 
-    public function save()
+//    public function save()
+//    {
+//        $news_mapper = new NewsMapper();
+//        $news_mapper->update($this);
+//    }
+
+    protected static function targetMapper(): Mapper
     {
-        $news_mapper = new NewsMapper();
-        $news_mapper->update($this);
+        return new NewsMapper();
     }
 }
