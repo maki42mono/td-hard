@@ -47,9 +47,14 @@ class MyController
             $news_model = new NewsModel($news_data, true);
 
             if ($news_model->save()) {
+                $news_to_front = [];
+                foreach ($news_model->attributes as $key => $value) {
+                    $news_to_front[NewsModel::ATTR_PARAMS[$key]["front_name"]] = $value;
+                }
+
                 echo json_encode([
                     "status" => 200,
-                    "imageName" => $image_name,
+                    "newsItem" => $news_to_front,
                 ]);
             }
         }
@@ -65,6 +70,7 @@ class MyController
         foreach ($all_news as $news) {
             $news_arr = $news->attributes;
             $curr_news = [];
+//            todo: вынести
             foreach ($news_arr as $key => $value) {
                 $curr_news[NewsModel::ATTR_PARAMS[$key]["front_name"]] = $value;
             }

@@ -47,29 +47,69 @@ abstract class Mapper
         return $this->select_all_stmt;
     }
 
-    public function update(DomainObject $object)
+//    todo: упростить
+    public function update(DomainObject $object): bool
     {
-        if (is_array($object->attributes)) {
-            $update_values = "";
-            $is_first = true;
-            $delim = "";
-            foreach ($object->attributes as $key => $value) {
-                if (isset($value) && !is_null($value) && $key != "id") {
-                    $update_values .= "{$delim}{$key} = '$value'";
-                    if ($is_first) {
-                        $is_first = false;
-                        $delim = ", ";
-                    }
+//        todo: обработать ошибку
+        if (! is_array($object->attributes)) {
+            throw new \Exception();
+        }
+        
+        $update_values = "";
+        $is_first = true;
+        $delim = "";
+        foreach ($object->attributes as $key => $value) {
+            if (isset($value) && !is_null($value) && $key != "id") {
+                $update_values .= "{$delim}{$key} = '$value'";
+                if ($is_first) {
+                    $is_first = false;
+                    $delim = ", ";
                 }
             }
         }
+        
 
 
         $this->update_stmt = $this->pdo->prepare(
             "UPDATE {$this->table_name} SET {$update_values} WHERE id={$object->getId()}"
         );
 
-        $res = $this->updateStmt()->execute();
+        return $this->updateStmt()->execute();
+    }
+
+    public function save(DomainObject $object): bool
+    {
+    //        todo: обработать ошибку
+        if (! is_array($object->attributes)) {
+            throw new \Exception();
+        }
+        
+
+        
+        $sql_value_names = "";
+        $sql_new_values = "";
+        $is_first = true;
+        $delim = "";
+        foreach ($object->attributes as $key => $value) {
+            if (isset($value) && !is_null($value) && $key != "id") {
+                $sql_value_names = $delim . $key;
+                $sql_new_values .= "{$delim}'{$value}'";
+                if ($is_first) {
+                    $is_first = false;
+                    $delim = ", ";
+                }
+            }
+        }
+
+        $sth = $this->pdo
+            ->prepare("INSERT INTO {$this->table_name} ({$sql_value_names}) VALUES ({$sql_new_values})");
+        $res = $sth->execute();
+
+        $object->attributes["id"] = $this->pdo->lastInsertId();
+
+//        $sth->debugDumpParams();
+
+        return $res;
     }
 
     protected function updateStmt()

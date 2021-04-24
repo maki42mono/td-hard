@@ -27,7 +27,12 @@ abstract class DomainObject
     public function save(): bool
     {
         $mapper = $this->targetMapper();
-        $mapper->update($this);
+        if (isset($this->id)) {
+            $mapper->update($this);
+        } else {
+            $mapper->save($this);
+        }
+
 
         return true;
     }

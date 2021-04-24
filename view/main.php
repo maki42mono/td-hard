@@ -39,7 +39,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
 <script>
     var sortId = 1;
-    var newId = -1;
+    // var newId = -1;
 
     const app = new Vue({
         el: '#app',
@@ -52,6 +52,8 @@
         async created () {
             const response = await fetch("/getData");
             const data = await response.json();
+
+            // сортируем новости, чтобы при добавлении новых оставлять текущий порадок без запросов к бд
             data.news.forEach(e => {
                 e.sortId = sortId++;
             });
@@ -62,7 +64,7 @@
                 this.newsItemEditable = {
                     title: 'Новая новость',
                     sortId: sortId++,
-                    newId: newId--
+                    // newId: newId--
                 };
                 var modal = this.$refs['modal'];
                 modal.showModal();
@@ -84,12 +86,12 @@
                 console.log(requestOptions);
                 const response = await fetch("/saveData", requestOptions);
                 const data = await response.json();
-                console.log(data);
                 if (data.status == 200) {
 
-                    e.image = data.imageName;
-                    this.news = this.news.filter(obj => obj.id !== e.id);
-                    this.news.push(e);
+                    var savedNews = data.newsItem;
+                    this.news = this.news.filter(obj => obj.id != savedNews.id);
+                    savedNews.sortId = e.sortId;
+                    this.news.push(savedNews);
                     this.news.sort((a, b) => {
                         return a.sortId - b.sortId;
                     });
