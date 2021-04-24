@@ -52,6 +52,9 @@
         async created () {
             const response = await fetch("/getData");
             const data = await response.json();
+            data.news.forEach(e => {
+                e.sortId = sortId++;
+            });
             this.news = data.news;
         },
         methods: {
