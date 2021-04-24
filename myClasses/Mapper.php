@@ -104,8 +104,8 @@ abstract class Mapper
         $sth = $this->pdo
             ->prepare("INSERT INTO {$this->table_name} ({$sql_value_names}) VALUES ({$sql_new_values})");
         $res = $sth->execute();
-
-        $object->attributes["id"] = $this->pdo->lastInsertId();
+        $object->setId($this->pdo->lastInsertId());
+//        $object->attributes["id"] = ;
 
 //        $sth->debugDumpParams();
 

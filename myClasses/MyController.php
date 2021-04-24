@@ -37,25 +37,24 @@ class MyController
 
         if (isset($post_data)) {
             $news_data = $post_data["newsData"];
-            $image_name = $news_data["image"];
             if($post_data["hasNewImage"]) {
                 $file = new File($news_data["image"]);
                 $file->saveImage(self::IMAGE_PATH);
-                $news_data["image"] = $image_name = $file->getFileName();
+                $news_data["image"] = $file->getFileName();
             }
 
             $news_model = new NewsModel($news_data, true);
 
             if ($news_model->save()) {
+                $news_model->attributes["id"] = $news_model->getId();
+//                var_dump($news_model);
                 $news_to_front = [];
+//
                 foreach ($news_model->attributes as $key => $value) {
                     $news_to_front[NewsModel::ATTR_PARAMS[$key]["front_name"]] = $value;
                 }
 
-                echo json_encode([
-                    "status" => 200,
-                    "newsItem" => $news_to_front,
-                ]);
+                echo json_encode($news_to_front);
             }
         }
 
@@ -72,6 +71,9 @@ class MyController
             $curr_news = [];
 //            todo: вынести
             foreach ($news_arr as $key => $value) {
+                if ($key == "flag_draft") {
+                    $value = (bool)$value;
+                }
                 $curr_news[NewsModel::ATTR_PARAMS[$key]["front_name"]] = $value;
             }
             $all_news_arr[] = $curr_news;

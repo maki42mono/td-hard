@@ -19,6 +19,11 @@ abstract class DomainObject
         return $this->id;
     }
 
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+
     protected static function findAllByMapper(Mapper $mapper): array
     {
         return $mapper->findAll();

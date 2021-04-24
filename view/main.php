@@ -14,8 +14,11 @@
             <br><br>
         </li>
     </ul>
-    <button @click="addNews">
-        Добавить
+    <button @click="addNews(true)">
+        Добавить и редактировать
+    </button>
+    <button @click="addNews(false)">
+        Добавить пустую
     </button>
     <dialog ref="modal" close>
         <div v-if="newsItemEditable !== null">
@@ -39,7 +42,6 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
 <script>
     var sortId = 1;
-    // var newId = -1;
 
     const app = new Vue({
         el: '#app',
@@ -60,14 +62,17 @@
             this.news = data.news;
         },
         methods: {
-            addNews: function () {
+            addNews: function (addAndEdit = false) {
                 this.newsItemEditable = {
                     title: 'Новая новость',
                     sortId: sortId++,
-                    // newId: newId--
                 };
-                var modal = this.$refs['modal'];
-                modal.showModal();
+                if (addAndEdit) {
+                    var modal = this.$refs['modal'];
+                    modal.showModal();
+                } else {
+                    this.saveNewsItem(this.newsItemEditable);
+                }
             },
             editNews: function (e) {
                 this.newsItemEditable = Object.assign({}, e);
@@ -75,7 +80,13 @@
                 modal.showModal();
             },
             async saveModal(e) {
+                if (await this.saveNewsItem()) {
+                    app.closeModal();
+                }
+            },
+            async saveNewsItem () {
                 var that = this;
+                console.log(that.newsItemEditable);
                 const requestOptions = {
                     method: "POST",
                     headers: {
@@ -83,20 +94,19 @@
                     },
                     body: JSON.stringify({newsData: that.newsItemEditable, hasNewImage: this.hasLoadedImage})
                 };
-                console.log(requestOptions);
                 const response = await fetch("/saveData", requestOptions);
-                const data = await response.json();
-                if (data.status == 200) {
-
-                    var savedNews = data.newsItem;
+                //todo: делать красивее
+                if (response.status == 200) {
+                    var savedNews = await response.json();
+                    console.log(savedNews);
                     this.news = this.news.filter(obj => obj.id != savedNews.id);
-                    savedNews.sortId = e.sortId;
+                    savedNews.sortId = that.newsItemEditable.sortId;
                     this.news.push(savedNews);
                     this.news.sort((a, b) => {
                         return a.sortId - b.sortId;
                     });
-                    app.closeModal();
                 }
+                return true;
             },
             closeModal: function () {
                 var modal = this.$refs['modal'];
