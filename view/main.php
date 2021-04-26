@@ -39,7 +39,9 @@
             {{ newsItem.descriptionLong }}
             <button @click="editNews(newsItem)">Изменить!</button><br>
             <button @click="deleteNews(newsItem)">Удалить…</button><br>
-            <img style="max-height: 70px;" :src="'/src/image/' + newsItem.image">
+            <div v-if="newsItem.image">
+                <img style="max-height: 70px;" :src="'/src/image/' + newsItem.image">
+            </div>
             <br><br>
         </li>
     </ul>
@@ -68,9 +70,11 @@
             <label for="is_draft">Черновик</label>
             <button @click="saveModal(newsItemEditable)">Сохранить и закрыть</button>
             <button @click="closeModal">Закрыть</button><br>
-            <textarea>{{ newsItemEditable.descriptionLong }}</textarea>
+            <textarea v-model="newsItemEditable.descriptionLong"></textarea>
+            <div v-if="newsItemEditable.image || hasLoadedImage">
             <img style="max-height: 70px;"
                  :src="(hasLoadedImage ? '' : '/src/image/') + newsItemEditable.image">
+            </div>
             <input type="file" id="file" ref="modalFile" @change="uploadFile(newsItemEditable)">
         </div>
 
@@ -93,6 +97,7 @@
             hasLoadedImage: false,
             uploadedImage: null,
             allNewsCount: null,
+            //todo: получать с бекенда
             newsOnPage: 4,
             pagesCount: 1,
             activePage: 1,
@@ -134,6 +139,7 @@
             addNews: function (addAndEdit = false) {
                 this.newsItemEditable = {
                     title: 'Новая новость',
+                    isDraft: true,
                     sortId: sortId++,
                 };
                 this.isNewItem = true;
