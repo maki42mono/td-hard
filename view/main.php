@@ -8,6 +8,8 @@
     .b-paginator__li > a {
         /*display: block;*/
         padding: 10px 20px;
+        text-decoration: none;
+        color: black;
     }
 
     li.b-paginator__li {
