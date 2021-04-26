@@ -7,5 +7,8 @@
     :prev-text="'<<<'"
     :next-text="'>>>'"
     :active-class="'b-paginator__li--active'"
-    :container-class="'b-paginator'">
+    :page-class="'list-group-item btn btn-outline-secondary b-paginator__li'"
+    :prev-class="'list-group-item btn btn-outline-secondary'"
+    :next-class="'list-group-item btn btn-outline-secondary'"
+    :container-class="'list-group list-group-horizontal'">
 </paginate>

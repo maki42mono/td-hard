@@ -5,16 +5,8 @@
 <body>
 <h1>Максим Пух, тестовое задание для бекенд(фуллстек)-разработчиков.</h1>
 <style>
-    .b-paginator > ul.hr {
-        margin: 0; /* Обнуляем значение отступов */
-        padding: 4px; /* Значение полей */
-    }
-
-    .b-paginator > li {
-        display: inline; /* Отображать как строчный элемент */
-        margin-right: 5px; /* Отступ слева */
-        border: 1px solid #000; /* Рамка вокруг текста */
-        padding: 3px; /* Поля вокруг текста */
+    .b-paginator__li > a {
+        display: block;
     }
 
     .b-paginator__li--active {
