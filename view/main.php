@@ -6,7 +6,13 @@
 <h1>Максим Пух, тестовое задание для бекенд(фуллстек)-разработчиков.</h1>
 <style>
     .b-paginator__li > a {
-        display: block;
+        /*display: block;*/
+        padding: 10px 20px;
+    }
+
+    li.b-paginator__li {
+        padding-left: 0;
+        padding-right: 0;
     }
 
     .b-paginator__li--active {

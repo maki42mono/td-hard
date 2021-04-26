@@ -11,4 +11,5 @@
     :prev-class="'list-group-item btn btn-outline-secondary'"
     :next-class="'list-group-item btn btn-outline-secondary'"
     :container-class="'list-group list-group-horizontal'">
+  </span>
 </paginate>
