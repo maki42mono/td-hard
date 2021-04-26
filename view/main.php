@@ -22,7 +22,12 @@
     }
 
     .b-news__item {
-        padding: 10px 0;
+        margin: 10px 0;
+        /*padding: 10px 0;*/
+    }
+
+    .b-news-item__striped {
+        padding: 10px;
     }
 
     .b-news > .b-news__item:nth-child(odd) .b-news-item__striped {
