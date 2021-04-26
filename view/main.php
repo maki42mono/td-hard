@@ -96,6 +96,7 @@
             newsOnPage: 2,
             pagesCount: 0,
             activePage: 1,
+            isNewItem: false,
         },
         async created () {
             const data = await this.getNews();
@@ -132,6 +133,7 @@
                     title: 'Новая новость',
                     sortId: sortId++,
                 };
+                this.isNewItem = true;
                 if (addAndEdit) {
                     var modal = this.$refs['modal'];
                     modal.showModal();
@@ -173,16 +175,19 @@
                 };
                 const response = await fetch("/saveData", requestOptions);
                 //todo: делать красивее
-                if (response.status == 200) {
-                    var savedNews = await response.json();
-                    this.news = this.news.filter(obj => obj.id != savedNews.id);
-                    savedNews.sortId = that.newsItemEditable.sortId;
-                    this.newsItemEditable.image = savedNews.image;
-                    this.news.push(savedNews);
-                    this.news.sort((a, b) => {
-                        return a.sortId - b.sortId;
-                    });
+                if (response.status != 200) {
+                    return false
                 }
+
+                var savedNews = await response.json();
+                this.news = this.news.filter(obj => obj.id != savedNews.id);
+                savedNews.sortId = that.newsItemEditable.sortId;
+                this.newsItemEditable.image = savedNews.image;
+                this.news.push(savedNews);
+                this.news.sort((a, b) => {
+                    return a.sortId - b.sortId;
+                });
+                this.isNewItem = false;
                 return true;
             },
             closeModal: function () {
@@ -202,7 +207,6 @@
                 };
             },
             clickCallback: function (pageNum) {
-                // console.log(pageNum)
                 this.activePage = pageNum;
                 this.getNews();
             },
