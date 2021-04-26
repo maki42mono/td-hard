@@ -36,6 +36,7 @@ abstract class DomainObject
 
     public function save(): bool
     {
+        $this->beforeSave();
         $mapper = $this->targetMapper();
         if (isset($this->id)) {
             $mapper->update($this);
@@ -70,4 +71,6 @@ abstract class DomainObject
     abstract public static function findInRange(int $rows_count, int $start_from): array;
 
     abstract public static function getTotalCount(): int;
+
+    abstract protected function beforeSave();
 }

@@ -107,4 +107,15 @@ class NewsModel extends DomainObject
         $mapper = self::targetMapper();
         return parent::getTotalCountByMapper($mapper);
     }
+
+    protected function beforeSave()
+    {
+//        var_dump($this->attributes["flag_draft"]);
+        if (! isset($this->attributes["flag_draft"])) {
+            $this->attributes["flag_draft"] = 0;
+        } else {
+            $this->attributes["flag_draft"] = ($this->attributes["flag_draft"]) ? "1" : "0";
+        }
+//        $this->attributes["flag_draft"] = $this->attributes["flag_draft"] ?? '0';
+    }
 }

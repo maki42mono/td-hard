@@ -93,6 +93,9 @@ abstract class Mapper
             "UPDATE {$this->table_name} SET {$update_values} WHERE id={$object->getId()}"
         );
 
+        $res = $this->updateStmt()->execute();
+//        $this->update_stmt->debugDumpParams();
+
         return $this->updateStmt()->execute();
     }
 

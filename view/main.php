@@ -181,13 +181,7 @@
 
                 var savedNews = await response.json();
                 if (! this.isNewItem) {
-                    this.news = this.news.filter(obj => obj.id != savedNews.id);
-                    savedNews.sortId = that.newsItemEditable.sortId;
-                    this.newsItemEditable.image = savedNews.image;
-                    this.news.push(savedNews);
-                    this.news.sort((a, b) => {
-                        return a.sortId - b.sortId;
-                    });
+                    this.addItemToNewsCollection(savedNews);
                 } else if (this.activePage < this.pagesCount) {
                     this.activePage = this.pagesCount;
                     await this.getNews();
@@ -195,13 +189,7 @@
                     return true;
                 } else if (this.activePage == this.pagesCount) {
                     if (this.news.length < this.newsOnPage) {
-                        this.news = this.news.filter(obj => obj.id != savedNews.id);
-                        savedNews.sortId = that.newsItemEditable.sortId;
-                        this.newsItemEditable.image = savedNews.image;
-                        this.news.push(savedNews);
-                        this.news.sort((a, b) => {
-                            return a.sortId - b.sortId;
-                        });
+                        this.addItemToNewsCollection(savedNews);
                     } else {
                         this.pagesCount++;
                         this.allNewsCount = 1;
@@ -212,6 +200,15 @@
 
                 this.isNewItem = false;
                 return true;
+            },
+            addItemToNewsCollection: function (newsItem) {
+                this.news = this.news.filter(obj => obj.id != newsItem.id);
+                newsItem.sortId = this.newsItemEditable.sortId;
+                this.newsItemEditable.image = newsItem.image;
+                this.news.push(newsItem);
+                this.news.sort((a, b) => {
+                    return a.sortId - b.sortId;
+                });
             },
             closeModal: function () {
                 var modal = this.$refs['modal'];

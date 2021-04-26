@@ -47,9 +47,14 @@ class MyController
             $news_model = new NewsModel($news_data, true);
 
             if ($news_model->save()) {
+//                var_dump($news_model);
                 $news_model->attributes["id"] = $news_model->getId();
                 $news_to_front = [];
+//                todo: вынести
                 foreach ($news_model->attributes as $key => $value) {
+                    if ($key == "flag_draft") {
+                        $value = (bool)$value;
+                    }
                     $news_to_front[NewsModel::ATTR_PARAMS[$key]["front_name"]] = $value;
                 }
 
