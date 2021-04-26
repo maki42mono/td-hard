@@ -85,7 +85,10 @@ class MyController
             $all_news_arr[] = $curr_news;
         }
 
-        echo json_encode(["news" => $all_news_arr]);
+        echo json_encode([
+            "news" => $all_news_arr,
+            "allNewsCount" => NewsModel::getTotalCount(),
+        ]);
     }
 
     private static function runMyView($view_name)

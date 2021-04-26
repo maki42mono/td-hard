@@ -41,6 +41,7 @@ abstract class DomainObject
         return true;
     }
 
+//    todo: переделать в ахивацию
     public function delete(): bool
     {
         $mapper = $this->targetMapper();
@@ -52,7 +53,14 @@ abstract class DomainObject
 
     }
 
+    protected static function getTotalCountByMapper(Mapper $mapper): int
+    {
+        return $mapper->getTotalCount();
+    }
+
     abstract protected static function targetMapper(): Mapper;
 
     abstract public static function findAll(): array;
+
+    abstract public static function getTotalCount(): int;
 }

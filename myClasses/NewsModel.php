@@ -95,4 +95,10 @@ class NewsModel extends DomainObject
     {
         return new NewsMapper();
     }
+
+    public static function getTotalCount(): int
+    {
+        $mapper = self::targetMapper();
+        return parent::getTotalCountByMapper($mapper);
+    }
 }

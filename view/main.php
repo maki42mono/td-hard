@@ -3,7 +3,29 @@
 </head>
 <body>
 <h1>Максим Пух, тестовое задание для бекенд(фуллстек)-разработчиков.</h1>
+<style>
+    .b-paginator > ul.hr {
+        margin: 0; /* Обнуляем значение отступов */
+        padding: 4px; /* Значение полей */
+    }
+
+    .b-paginator > li {
+        display: inline; /* Отображать как строчный элемент */
+        margin-right: 5px; /* Отступ слева */
+        border: 1px solid #000; /* Рамка вокруг текста */
+        padding: 3px; /* Поля вокруг текста */
+    }
+</style>
 <div id="app">
+<!--    todo: по 20 страниц? Или по 20 эементов на странице? -->
+    <paginate
+            :page-count="pagesCount"
+            :page-range="3"
+            :click-handler="clickCallback"
+            :prev-text="'<<<'"
+            :next-text="'>>>'"
+            :container-class="'b-paginator'">
+    </paginate>
     <ul>
         <li v-for="newsItem in news">
             <span v-if="newsItem.isDraft">(Ч)</span>
@@ -41,8 +63,11 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<script src="https://unpkg.com/vuejs-paginate@latest"></script>
 <script>
     var sortId = 1;
+
+    Vue.component('paginate', VuejsPaginate);
 
     const app = new Vue({
         el: '#app',
@@ -51,6 +76,9 @@
             newsItemEditable: null,
             hasLoadedImage: false,
             uploadedImage: null,
+            allNewsCount: null,
+            newsOnPage: 1,
+            pagesCount: 0,
         },
         async created () {
             const response = await fetch("/getData");
@@ -61,6 +89,8 @@
                 e.sortId = sortId++;
             });
             this.news = data.news;
+            this.allNewsCount = data.allNewsCount;
+            this.pagesCount = this.allNewsCount / this.newsOnPage;
         },
         methods: {
             addNews: function (addAndEdit = false) {
@@ -136,7 +166,10 @@
                     that.hasLoadedImage = true;
                     that.newsItemEditable.image = reader.result;
                 };
-            }
+            },
+            clickCallback: function (pageNum) {
+                console.log(pageNum)
+            },
         }
     });
 </script>

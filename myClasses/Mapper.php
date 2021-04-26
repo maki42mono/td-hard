@@ -77,6 +77,17 @@ abstract class Mapper
         return $this->updateStmt()->execute();
     }
 
+    public function getTotalCount(): int
+    {
+//        todo: переделать, когда перейдем к архивации
+        $sth = $this->pdo
+            ->prepare("SELECT COUNT(1) FROM {$this->table_name}");
+        $sth->execute();
+        $count = $sth->fetchColumn();
+        $sth->closeCursor();
+        return $count;
+    }
+
     public function save(DomainObject $object): bool
     {
     //        todo: обработать ошибку
