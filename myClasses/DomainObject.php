@@ -38,6 +38,7 @@ abstract class DomainObject
     {
         $this->beforeSave();
         $mapper = $this->targetMapper();
+//        var_dump($this->id);
         if (isset($this->id)) {
             $mapper->update($this);
         } else {

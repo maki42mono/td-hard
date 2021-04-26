@@ -94,16 +94,15 @@
             uploadedImage: null,
             allNewsCount: null,
             newsOnPage: 4,
-            pagesCount: 0,
+            pagesCount: 1,
             activePage: 1,
             isNewItem: false,
         },
         async created () {
             const data = await this.getNews();
-
             // сортируем новости, чтобы при добавлении новых оставлять текущий порадок без запросов к бд
 
-            this.pagesCount = Math.ceil(this.allNewsCount / this.newsOnPage);
+
         },
         methods: {
             async getNews() {
@@ -127,6 +126,10 @@
                 });
                 this.news = data.news;
                 this.allNewsCount = data.allNewsCount;
+                this.pagesCount = Math.ceil(this.allNewsCount / this.newsOnPage);
+                if (this.pagesCount == 0) {
+                    this.pagesCount = 1;
+                }
             },
             addNews: function (addAndEdit = false) {
                 this.newsItemEditable = {
@@ -155,9 +158,14 @@
                     body: JSON.stringify({newsData: e})
                 };
                 const response = await fetch("/deleteData", requestOptions);
-                if (response.status == 200) {
-                    this.news = this.news.filter(obj => obj.id != e.id);
+                if (response.status != 200) {
+                    return false;
                 }
+                if (this.news.length == 1) {
+                    this.activePage--;
+                }
+                await this.getNews();
+
             },
             async saveModal() {
                 if (await this.saveNewsItem()) {

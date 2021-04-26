@@ -93,8 +93,8 @@ abstract class Mapper
             "UPDATE {$this->table_name} SET {$update_values} WHERE id={$object->getId()}"
         );
 
-        $res = $this->updateStmt()->execute();
-//        $this->update_stmt->debugDumpParams();
+//        $res = $this->updateStmt()->execute();
+//        $res->debugDumpParams();
 
         return $this->updateStmt()->execute();
     }
@@ -121,9 +121,11 @@ abstract class Mapper
         $sql_new_values = "";
         $is_first = true;
         $delim = "";
+//        var_dump($object->attributes);
         foreach ($object->attributes as $key => $value) {
             if (isset($value) && !is_null($value) && $key != "id") {
-                $sql_value_names = $delim . $key;
+//                var_dump($key);
+                $sql_value_names .= $delim . $key;
                 $sql_new_values .= "{$delim}'{$value}'";
                 if ($is_first) {
                     $is_first = false;
