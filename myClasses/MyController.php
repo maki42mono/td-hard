@@ -8,7 +8,7 @@ class MyController
 {
     private const VIEW_PATH = __DIR__ . "/../view";
     private const IMAGE_PATH = __DIR__ . "/../src/image";
-    private const ITEMS_ON_PAGINATOR_PAGE = 2;
+    private const ITEMS_ON_PAGINATOR_PAGE = 4;
 
     public static function run()
     {

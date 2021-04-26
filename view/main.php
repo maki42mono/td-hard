@@ -93,7 +93,7 @@
             hasLoadedImage: false,
             uploadedImage: null,
             allNewsCount: null,
-            newsOnPage: 2,
+            newsOnPage: 4,
             pagesCount: 0,
             activePage: 1,
             isNewItem: false,
@@ -180,13 +180,36 @@
                 }
 
                 var savedNews = await response.json();
-                this.news = this.news.filter(obj => obj.id != savedNews.id);
-                savedNews.sortId = that.newsItemEditable.sortId;
-                this.newsItemEditable.image = savedNews.image;
-                this.news.push(savedNews);
-                this.news.sort((a, b) => {
-                    return a.sortId - b.sortId;
-                });
+                if (! this.isNewItem) {
+                    this.news = this.news.filter(obj => obj.id != savedNews.id);
+                    savedNews.sortId = that.newsItemEditable.sortId;
+                    this.newsItemEditable.image = savedNews.image;
+                    this.news.push(savedNews);
+                    this.news.sort((a, b) => {
+                        return a.sortId - b.sortId;
+                    });
+                } else if (this.activePage < this.pagesCount) {
+                    this.activePage = this.pagesCount;
+                    await this.getNews();
+                    this.isNewItem = false;
+                    return true;
+                } else if (this.activePage == this.pagesCount) {
+                    if (this.news.length < this.newsOnPage) {
+                        this.news = this.news.filter(obj => obj.id != savedNews.id);
+                        savedNews.sortId = that.newsItemEditable.sortId;
+                        this.newsItemEditable.image = savedNews.image;
+                        this.news.push(savedNews);
+                        this.news.sort((a, b) => {
+                            return a.sortId - b.sortId;
+                        });
+                    } else {
+                        this.pagesCount++;
+                        this.allNewsCount = 1;
+                        this.activePage = this.pagesCount;
+                        this.news = [savedNews];
+                    }
+                }
+
                 this.isNewItem = false;
                 return true;
             },
