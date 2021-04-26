@@ -33,6 +33,10 @@
     .b-news > .b-news__item:nth-child(odd) .b-news-item__striped {
         background: #f5f5f5;
     }
+
+    .b-news__add-buttons {
+        margin: 15px 0;
+    }
 </style>
 <div class="container-md">
     <h1>Максим Пух, тестовое задание для бекенд(фуллстек)-разработчиков.</h1>

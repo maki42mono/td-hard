@@ -7,9 +7,9 @@
     :prev-text="'<<<'"
     :next-text="'>>>'"
     :active-class="'b-paginator__li--active'"
-    :page-class="'list-group-item btn btn-outline-secondary b-paginator__li'"
-    :prev-class="'list-group-item btn btn-outline-secondary b-paginator__li'"
-    :next-class="'list-group-item btn btn-outline-secondary b-paginator__li'"
+    :page-class="'list-group-item btn btn-outline-info b-paginator__li'"
+    :prev-class="'list-group-item btn btn-outline-info b-paginator__li'"
+    :next-class="'list-group-item btn btn-outline-info b-paginator__li'"
     :container-class="'list-group list-group-horizontal'">
   </span>
 </paginate>

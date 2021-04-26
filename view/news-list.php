@@ -12,17 +12,16 @@
             </div>
             <div class="col-2">
                 <div class="row gy-2">
-                    <button type="button" @click="editNews(newsItem)" class="btn btn-outline-primary">Изменить</button>
+                    <button type="button" @click="editNews(newsItem)" class="btn btn-outline-info">Изменить</button>
                     <br>
                     <button type="button" @click="deleteNews(newsItem)" class="btn btn-outline-danger">Удалить</button>
                 </div>
             </div>
         </div>
     </div>
+    <div class="b-news__add-buttons">
+        <button type="button" @click="addNews(false)" class="btn btn-success">Добавить пустую</button>
+        <button type="button" @click="addNews(true)" class="btn btn-primary">Добавить и редактировать</button>
+    </div>
+
 </div>
-<button @click="addNews(true)">
-    Добавить и редактировать
-</button>
-<button @click="addNews(false)">
-    Добавить пустую
-</button>
