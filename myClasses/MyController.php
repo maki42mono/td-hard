@@ -8,6 +8,7 @@ class MyController
 {
     private const VIEW_PATH = __DIR__ . "/../view";
     private const IMAGE_PATH = __DIR__ . "/../src/image";
+    private const ITEMS_ON_PAGINATOR_PAGE = 2;
 
     public static function run()
     {
@@ -68,8 +69,13 @@ class MyController
     }
 
     private static function actionGetData() {
-
-        $all_news = NewsModel::findAll();
+        $post_data = json_decode(file_get_contents('php://input'), true);
+        $start_from = 0;
+        if (isset($post_data["page"])) {
+            $start_from = (int)$post_data["page"] * self::ITEMS_ON_PAGINATOR_PAGE;
+        }
+        $all_news = NewsModel::findInRange(self::ITEMS_ON_PAGINATOR_PAGE, $start_from);
+//        $all_news = NewsModel::findAll();
 
         $all_news_arr = [];
         foreach ($all_news as $news) {

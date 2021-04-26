@@ -15,15 +15,21 @@
         border: 1px solid #000; /* Рамка вокруг текста */
         padding: 3px; /* Поля вокруг текста */
     }
+
+    .b-paginator__li--active {
+        background-color: gold;
+    }
 </style>
 <div id="app">
 <!--    todo: по 20 страниц? Или по 20 эементов на странице? -->
     <paginate
+            v-model="activePage"
             :page-count="pagesCount"
             :page-range="3"
             :click-handler="clickCallback"
             :prev-text="'<<<'"
             :next-text="'>>>'"
+            :active-class="'b-paginator__li--active'"
             :container-class="'b-paginator'">
     </paginate>
     <ul>
@@ -43,6 +49,16 @@
     <button @click="addNews(false)">
         Добавить пустую
     </button>
+    <paginate
+            v-model="activePage"
+            :page-count="pagesCount"
+            :page-range="3"
+            :click-handler="clickCallback"
+            :prev-text="'<<<'"
+            :next-text="'>>>'"
+            :active-class="'b-paginator__li--active'"
+            :container-class="'b-paginator'">
+    </paginate>
     <dialog ref="modal" close>
         <div v-if="newsItemEditable !== null">
             <input type="text" v-model="newsItemEditable.title">
@@ -77,22 +93,40 @@
             hasLoadedImage: false,
             uploadedImage: null,
             allNewsCount: null,
-            newsOnPage: 1,
+            newsOnPage: 2,
             pagesCount: 0,
+            activePage: 1,
         },
         async created () {
-            const response = await fetch("/getData");
-            const data = await response.json();
+            const data = await this.getNews();
 
             // сортируем новости, чтобы при добавлении новых оставлять текущий порадок без запросов к бд
-            data.news.forEach(e => {
-                e.sortId = sortId++;
-            });
-            this.news = data.news;
-            this.allNewsCount = data.allNewsCount;
-            this.pagesCount = this.allNewsCount / this.newsOnPage;
+
+            this.pagesCount = Math.ceil(this.allNewsCount / this.newsOnPage);
         },
         methods: {
+            async getNews() {
+                const requestOptions = {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                    body: JSON.stringify({page: this.activePage - 1})
+                };
+                const response = await fetch("/getData", requestOptions);
+
+                if (response.status != 200) {
+                    return false;
+                }
+
+                var data = await response.json();
+
+                data.news.forEach(e => {
+                    e.sortId = sortId++;
+                });
+                this.news = data.news;
+                this.allNewsCount = data.allNewsCount;
+            },
             addNews: function (addAndEdit = false) {
                 this.newsItemEditable = {
                     title: 'Новая новость',
@@ -168,7 +202,9 @@
                 };
             },
             clickCallback: function (pageNum) {
-                console.log(pageNum)
+                // console.log(pageNum)
+                this.activePage = pageNum;
+                this.getNews();
             },
         }
     });

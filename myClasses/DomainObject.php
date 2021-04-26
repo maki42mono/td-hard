@@ -29,6 +29,11 @@ abstract class DomainObject
         return $mapper->findAll();
     }
 
+    protected static function findInRangeByMapper(int $rows_count, int $start_from, Mapper $mapper): array
+    {
+        return $mapper->findInRange($rows_count, $start_from);
+    }
+
     public function save(): bool
     {
         $mapper = $this->targetMapper();
@@ -61,6 +66,8 @@ abstract class DomainObject
     abstract protected static function targetMapper(): Mapper;
 
     abstract public static function findAll(): array;
+
+    abstract public static function findInRange(int $rows_count, int $start_from): array;
 
     abstract public static function getTotalCount(): int;
 }

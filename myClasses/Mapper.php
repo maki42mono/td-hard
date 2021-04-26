@@ -42,6 +42,25 @@ abstract class Mapper
         return $objects;
     }
 
+    public function findInRange(int $rows_count, int $start_from): array
+    {
+        $sth = $this->pdo
+            ->prepare("SELECT * FROM {$this->table_name} LIMIT {$start_from},{$rows_count}");
+        $sth->execute();
+        $rows = $sth->fetchAll();
+//        var_dump($res);
+        $sth->closeCursor();
+//        $sth->debugDumpParams();
+
+        $objects = [];
+        foreach ($rows as $row) {
+            $objects[] = $this->doCreateObject($row);
+        }
+
+        return $objects;
+//        return $res;
+    }
+
     protected function selectAllStmt()
     {
         return $this->select_all_stmt;

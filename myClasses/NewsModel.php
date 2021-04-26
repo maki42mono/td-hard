@@ -85,6 +85,12 @@ class NewsModel extends DomainObject
         return parent::findAllByMapper($mapper);
     }
 
+    public static function findInRange(int $rows_count, int $start_from): array
+    {
+        $mapper = self::targetMapper();
+        return parent::findInRangeByMapper($rows_count, $start_from, $mapper);
+    }
+
 //    public function save()
 //    {
 //        $news_mapper = new NewsMapper();
