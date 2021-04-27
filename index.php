@@ -1,7 +1,7 @@
 <?php
 // получаем все классы. Один класс — одно задание
 $my_load = function ($classname) {
-    $path = __DIR__ . DIRECTORY_SEPARATOR;
+    $path = __DIR__ . DIRECTORY_SEPARATOR . "$classname.php";
 
     if (file_exists($path)) {
         require_once($path);
@@ -12,6 +12,3 @@ $my_load = function ($classname) {
 \spl_autoload_register($my_load);
 
 \myClasses\MyController::run();
-
-?>
-<h1>Максим Пух, тестовое задание для бекенд(фуллстек)-разработчиков</h1>
