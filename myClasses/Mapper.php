@@ -45,7 +45,7 @@ abstract class Mapper
     public function findInRange(int $rows_count, int $start_from): array
     {
         $sth = $this->pdo
-            ->prepare("SELECT * FROM {$this->table_name} LIMIT {$start_from},{$rows_count}");
+            ->prepare("SELECT * FROM {$this->table_name} WHERE flag_is_deleted = 0 LIMIT {$start_from},{$rows_count}");
         $sth->execute();
         $rows = $sth->fetchAll();
 //        var_dump($res);
@@ -150,8 +150,9 @@ abstract class Mapper
             throw new \Exception();
         }
 
+        $now = date("Y-m-d H:i:s");
         $sth = $this->pdo
-            ->prepare("DELETE FROM {$this->table_name} WHERE id={$object->getId()}");
+            ->prepare("UPDATE {$this->table_name} SET flag_is_deleted = 1, deleted = '{$now}' WHERE id={$object->getId()}");
         $res = $sth->execute();
 
         return $res;

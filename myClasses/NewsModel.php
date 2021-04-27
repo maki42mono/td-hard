@@ -36,14 +36,15 @@ class NewsModel extends DomainObject
             "label" => "Черновик",
             "front_name" => "isDraft",
         ],
-        "created" => [
+//        пока не выводить. Иначе клиентский код сможет их использовать
+        /*"created" => [
             "label" => "Дата добавления",
             "front_name" => "created",
         ],
         "updated" => [
             "label" => "Дата изменения",
             "front_name" => "updated",
-        ],
+        ],*/
     ];
 
     public function __construct(array $attributes = [], bool $from_front = false)

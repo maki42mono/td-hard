@@ -47,7 +47,6 @@ abstract class DomainObject
         return true;
     }
 
-//    todo: переделать в ахивацию
     public function delete(): bool
     {
         $mapper = $this->targetMapper();
