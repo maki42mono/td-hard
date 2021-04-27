@@ -27,7 +27,16 @@ class MyController
         $action = "action{$req}";
         $rself = new \ReflectionClass(self::class);
         if ($rself->hasMethod($action)) {
-           self::$action();
+            try {
+                self::$action();
+            } catch (\Exception $e) {
+                echo json_encode(array(
+                    'error' => array(
+                        'code' => $e->getCode(),
+                        'message' => $e->getMessage()
+                    )
+                ));
+            }
         }
 
         exit;
@@ -46,27 +55,18 @@ class MyController
 
             $news_model = new NewsModel($news_data, true);
 
-            try {
-                if ($news_model->save()) {
-                    $news_model->attributes["id"] = $news_model->getId();
-                    $news_to_front = [];
+            if ($news_model->save()) {
+                $news_model->attributes["id"] = $news_model->getId();
+                $news_to_front = [];
 //                todo: вынести
-                    foreach ($news_model->attributes as $key => $value) {
-                        if ($key == "flag_draft") {
-                            $value = (bool)$value;
-                        }
-                        $news_to_front[NewsModel::ATTR_PARAMS[$key]["front_name"]] = $value;
+                foreach ($news_model->attributes as $key => $value) {
+                    if ($key == "flag_draft") {
+                        $value = (bool)$value;
                     }
-
-                    echo json_encode($news_to_front);
+                    $news_to_front[NewsModel::ATTR_PARAMS[$key]["front_name"]] = $value;
                 }
-            } catch (\Exception $e) {
-                echo json_encode(array(
-                    'error' => array(
-                        'code' => $e->getCode(),
-                        'message' => $e->getMessage()
-                    )
-                ));
+
+                echo json_encode($news_to_front);
             }
 
         }

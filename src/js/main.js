@@ -14,6 +14,8 @@ const app = new Vue({
         pagesCount: 1,
         activePage: 1,
         isNewItem: false,
+        //todo: получать с бека
+        maxFileSizeMb: 5,
     },
     async created () {
         const data = await this.getNews();
@@ -165,7 +167,13 @@ const app = new Vue({
         },
         uploadFile: function () {
             var that = this;
-            var file = this.$refs['modalFile'].files[0];
+            var file = that.$refs['modalFile'].files[0];
+            if (file.size > that.maxFileSizeMb * 1024 * 1024) {
+                //todo: тут нужно сделать так, чтобы в форме в загрузке файла не подтягивалось имя неправильно загруженного
+                alert("Файл должен быть меньше " + that.maxFileSizeMb + " Мб. У вас " + (file.size / (1024 * 1024)).toFixed(2) + " Мб");
+                return false;
+            }
+            // console.log(file.size);
             var reader = new FileReader();
             reader.readAsDataURL(file);
             that.uploadedImage = file;
@@ -173,6 +181,7 @@ const app = new Vue({
                 that.hasLoadedImage = true;
                 that.newsItemEditable.image = reader.result;
             };
+            return true;
         },
         clickCallback: function (pageNum) {
             this.activePage = pageNum;

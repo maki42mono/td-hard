@@ -12,7 +12,7 @@
             <img style="max-height: 70px;"
                  :src="(hasLoadedImage ? '' : '/src/image/') + newsItemEditable.image">
         </div>
-        <input type="file" id="file" ref="modalFile" @change="uploadFile(newsItemEditable)">
+        <input type="file" id="file" ref="modalFile" @change="uploadFile(newsItemEditable)" max-file-size="1024">
     </div>
 
 </dialog>
