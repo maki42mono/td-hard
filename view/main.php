@@ -20,8 +20,8 @@
         ?>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <script src="https://unpkg.com/vuejs-paginate@latest"></script>
-<script src="/src/js/main.js"></script>
+<script src="/src/js/main.js?1"></script>
 </body>
 </html>

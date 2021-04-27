@@ -46,7 +46,7 @@ const app = new Vue({
                     });
                     this.news = data.news;
                     this.newsOnPage = data.newsOnPage;
-                    this.newsOnPage = data.fileMaxSizeMB;
+                    this.fileMaxSizeMB = data.fileMaxSizeMB;
                     this.allNewsCount = data.allNewsCount;
                     this.pagesCount = Math.ceil(this.allNewsCount / this.newsOnPage);
                     if (this.pagesCount == 0) {
