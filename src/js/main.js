@@ -14,7 +14,6 @@ const app = new Vue({
         pagesCount: 1,
         activePage: 1,
         isNewItem: false,
-        //todo: получать с бека
         fileMaxSizeMB: 5,
     },
     async created () {

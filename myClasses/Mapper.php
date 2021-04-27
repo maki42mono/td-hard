@@ -106,7 +106,7 @@ abstract class Mapper
     {
 //        todo: переделать, когда перейдем к архивации
         $sth = $this->pdo
-            ->prepare("SELECT COUNT(1) FROM {$this->table_name}");
+            ->prepare("SELECT COUNT(1) FROM {$this->table_name} WHERE flag_is_deleted = 0");
         $sth->execute();
         $count = $sth->fetchColumn();
         $sth->closeCursor();
