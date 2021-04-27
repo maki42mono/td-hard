@@ -73,8 +73,9 @@ const app = new Vue({
             }
         },
         editNews: function (e) {
+            var that = this;
             this.newsItemEditable = Object.assign({}, e);
-            var modal = this.$refs['modal'];
+            var modal = that.$refs['modal'];
             modal.showModal();
         },
         async deleteNews(e) {
