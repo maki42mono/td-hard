@@ -37,3 +37,34 @@ li.b-paginator__li {
     line-break: anywhere;
     overflow: auto;
 }
+
+.b-modal {
+    width: 750px;
+}
+
+.b-modal__close {
+    position: absolute;
+    right: 18px;
+    top: 18px;
+}
+
+.b-modal__row {
+    margin-top: 20px;
+}
+
+.b-modal__file {
+    max-width: 280px;
+    margin-top: 10px;
+}
+
+.b-modal__label {
+    font-weight: bold;
+}
+
+.b-modal__item {
+    display: inline-block;
+}
+
+.b-modal__item + .b-modal__item {
+    margin-left: 10px;
+}
