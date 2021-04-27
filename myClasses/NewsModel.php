@@ -117,19 +117,20 @@ class NewsModel extends DomainObject
         }
 
         $this->attributes["description_long"] = strip_tags($this->attributes["description_long"], '<a><b><i><strike>');
-        if (isset($this->attributes["description_long"]) && strlen($this->attributes["description_long"]) > 500) {
+        if (isset($this->attributes["description_long"]) && mb_strlen($this->attributes["description_long"]) > 500) {
             throw new \Exception("в подробном описании должно быть меньше 500 символов!", 500);
         }
 
         if (isset($this->attributes["published_date"]) && ! (bool)strtotime($this->attributes["published_date"])) {
+//            todo: тут и на клиенте можно проверять, что дата не из будущего
             throw new \Exception("исправьте дату!", 500);
         }
 
-        if (isset($this->attributes["title"]) && strlen($this->attributes["title"]) > 50) {
+        if (isset($this->attributes["title"]) && mb_strlen($this->attributes["title"]) > 50) {
             throw new \Exception("в заголовке должно быть меньше 50 символов!", 500);
         }
 
-        if (isset($this->attributes["description_short"]) && strlen($this->attributes["description_short"]) > 200) {
+        if (isset($this->attributes["description_short"]) && mb_strlen($this->attributes["description_short"]) > 200) {
             throw new \Exception("в кратком описании должно быть меньше 200 символов!", 500);
         }
 

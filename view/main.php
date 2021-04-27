@@ -37,6 +37,15 @@
     .b-news__add-buttons {
         margin: 15px 0;
     }
+
+    .b-news__long-text {
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        line-break: anywhere;
+        overflow: auto;
+    }
 </style>
 <div class="container-md">
     <h1>Максим Пух, тестовое задание для бекенд(фуллстек)-разработчиков.</h1>

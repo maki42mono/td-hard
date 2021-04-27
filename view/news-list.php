@@ -9,7 +9,7 @@
                 <span v-if="newsItem.isDraft">(Черн.)</span>
                 {{ newsItem.title }} <span v-if="newsItem.publishedDate">(опубликована {{ newsItem.publishedDate }})</span><br>
                 {{ newsItem.descriptionShort }}<br>
-                <span v-html="newsItem.descriptionLong"></span>
+                <div v-html="newsItem.descriptionLong" class="b-news__long-text"></div>
                 <div v-if="newsItem.image">
                     <img style="max-height: 70px;" :src="'/src/image/' + newsItem.image">
                 </div>

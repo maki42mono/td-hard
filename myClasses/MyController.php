@@ -108,6 +108,7 @@ class MyController
             "news" => $all_news_arr,
             "allNewsCount" => NewsModel::getTotalCount(),
             "newsOnPage" => self::ITEMS_ON_PAGINATOR_PAGE,
+            "fileMaxSizeMB" => File::MAX_SIZE_MB,
         ]);
     }
 
