@@ -12,7 +12,17 @@ class MyController
 
     public static function run()
     {
-        Registry::instance();
+        try {
+            Registry::instance();
+        } catch (\Exception $e) {
+//            throw new \Exception($e->getMessage(), 500);
+            echo json_encode(array(
+                'error' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage()
+                )
+            ));
+        }
 
         if (isset($_REQUEST["r"])) {
             $req = $_REQUEST["r"];

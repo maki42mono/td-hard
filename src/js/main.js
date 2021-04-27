@@ -32,15 +32,14 @@ const app = new Vue({
                 },
                 body: JSON.stringify({page: this.activePage - 1})
             };
-            // var that = this;
-            // const response = await fetch("/getData", requestOptions);
+
             fetch("/getData", requestOptions)
                 .then(async response => {
                     var data = await response.json();
 
-                    if (!response.ok) {
+                    if (!response.ok || data.error != undefined) {
                         const error = (data && data.message) || response.status;
-                        return Promise.reject(error);
+                        return Promise.reject(data.error);
                     }
 
                     data.news.forEach(e => {
@@ -49,7 +48,6 @@ const app = new Vue({
                     this.news = data.news;
                     this.newsOnPage = data.newsOnPage;
                     this.newsOnPage = data.fileMaxSizeMB;
-                    console.log(this.newsOnPage);
                     this.allNewsCount = data.allNewsCount;
                     this.pagesCount = Math.ceil(this.allNewsCount / this.newsOnPage);
                     if (this.pagesCount == 0) {
@@ -58,7 +56,7 @@ const app = new Vue({
                 })
                 .catch(error => {
                     // this.errorMessage = error;
-                    console.error('There was an error!', error);
+                    alert('Ошибка при запросе данных! ' + error.message);
                 });
         },
         addNews: function (addAndEdit = false) {
@@ -162,7 +160,6 @@ const app = new Vue({
         },
         closeModal: function () {
             var modal = this.$refs['modal'];
-            console.log(modal);
             this.hasLoadedImage = false;
             modal.close();
         },

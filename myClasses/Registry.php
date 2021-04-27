@@ -12,10 +12,18 @@ class Registry
 
     private function __construct()
     {
-        $this->getConf();
 
-        $db_conf = $this->values["db"];
-        $this->pdo = new \PDO("{$db_conf["type"]}:host={$db_conf["host"]};dbname={$db_conf["db_name"]}", $db_conf["username"], $db_conf["password"]);
+        try {
+            $this->getConf();
+
+            $db_conf = $this->values["db"];
+            $this->pdo = new \PDO("{$db_conf["type"]}:host={$db_conf["host"]};dbname={$db_conf["db_name"]}", $db_conf["username"], $db_conf["password"]);
+        } catch (ConfException $e) {
+            throw new ConfException($e->getMessage());
+        } catch (\Exception $e) {
+            throw new \Exception("ОШИБКА ПРИ ПОДКЛЮЧЕНИИ К БД. ПРОВЕРЬТЕ НАСТРОЙКИ В main-local.php", 500);
+        }
+
 
         return $this;
     }
@@ -45,7 +53,7 @@ class Registry
             $this->values = $conf;
 
         } else {
-            throw new \Exception("Создайте файл /config/main-local.php");
+            throw new ConfException("Создайте файл /config/main-local.php");
         }
     }
 

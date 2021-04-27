@@ -16,6 +16,11 @@ abstract class Mapper
         $reg = Registry::instance();
         $this->pdo = $reg->getPdo();
         $this->table_name = $this->targetTable();
+//        $this->checkIfTableExists();
+        if (! $this->checkIfTableExists()) {
+            throw new \Exception("Создайте таблицу {$this->table_name}");
+        }
+
     }
 
 //      todo: тут нужно работать с коллекциями, но это дольше
@@ -48,7 +53,6 @@ abstract class Mapper
             ->prepare("SELECT * FROM {$this->table_name} WHERE flag_is_deleted = 0 LIMIT {$start_from},{$rows_count}");
         $sth->execute();
         $rows = $sth->fetchAll();
-//        var_dump($res);
         $sth->closeCursor();
 //        $sth->debugDumpParams();
 
@@ -58,7 +62,6 @@ abstract class Mapper
         }
 
         return $objects;
-//        return $res;
     }
 
     protected function selectAllStmt()
@@ -121,10 +124,8 @@ abstract class Mapper
         $sql_new_values = "";
         $is_first = true;
         $delim = "";
-//        var_dump($object->attributes);
         foreach ($object->attributes as $key => $value) {
             if (isset($value) && !is_null($value) && $key != "id") {
-//                var_dump($key);
                 $sql_value_names .= $delim . $key;
                 $sql_new_values .= "{$delim}'{$value}'";
                 if ($is_first) {
@@ -162,6 +163,16 @@ abstract class Mapper
     protected function updateStmt()
     {
         return $this->update_stmt;
+    }
+
+    private function checkIfTableExists(): bool
+    {
+
+        $sth = $this->pdo->prepare("SHOW TABLES LIKE '{$this->table_name}'");
+         $sth->execute();
+         $res = $sth->fetchAll();
+         $sth->closeCursor();
+         return (count($res) > 0);
     }
 
     abstract protected function doCreateObject(array $raw): DomainObject;
