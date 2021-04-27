@@ -8,7 +8,7 @@ class MyController
 {
     private const VIEW_PATH = __DIR__ . "/../view";
     private const IMAGE_PATH = __DIR__ . "/../src/image";
-    private const ITEMS_ON_PAGINATOR_PAGE = 4;
+    private const ITEMS_ON_PAGINATOR_PAGE = 20;
 
     public static function run()
     {
@@ -46,20 +46,29 @@ class MyController
 
             $news_model = new NewsModel($news_data, true);
 
-            if ($news_model->save()) {
-//                var_dump($news_model);
-                $news_model->attributes["id"] = $news_model->getId();
-                $news_to_front = [];
+            try {
+                if ($news_model->save()) {
+                    $news_model->attributes["id"] = $news_model->getId();
+                    $news_to_front = [];
 //                todo: вынести
-                foreach ($news_model->attributes as $key => $value) {
-                    if ($key == "flag_draft") {
-                        $value = (bool)$value;
+                    foreach ($news_model->attributes as $key => $value) {
+                        if ($key == "flag_draft") {
+                            $value = (bool)$value;
+                        }
+                        $news_to_front[NewsModel::ATTR_PARAMS[$key]["front_name"]] = $value;
                     }
-                    $news_to_front[NewsModel::ATTR_PARAMS[$key]["front_name"]] = $value;
-                }
 
-                echo json_encode($news_to_front);
+                    echo json_encode($news_to_front);
+                }
+            } catch (\Exception $e) {
+                echo json_encode(array(
+                    'error' => array(
+                        'code' => $e->getCode(),
+                        'message' => $e->getMessage()
+                    )
+                ));
             }
+
         }
     }
 
@@ -80,7 +89,6 @@ class MyController
             $start_from = (int)$post_data["page"] * self::ITEMS_ON_PAGINATOR_PAGE;
         }
         $all_news = NewsModel::findInRange(self::ITEMS_ON_PAGINATOR_PAGE, $start_from);
-//        $all_news = NewsModel::findAll();
 
         $all_news_arr = [];
         foreach ($all_news as $news) {
@@ -99,6 +107,7 @@ class MyController
         echo json_encode([
             "news" => $all_news_arr,
             "allNewsCount" => NewsModel::getTotalCount(),
+            "newsOnPage" => self::ITEMS_ON_PAGINATOR_PAGE,
         ]);
     }
 

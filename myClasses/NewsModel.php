@@ -110,12 +110,16 @@ class NewsModel extends DomainObject
 
     protected function beforeSave()
     {
-//        var_dump($this->attributes["flag_draft"]);
         if (! isset($this->attributes["flag_draft"])) {
             $this->attributes["flag_draft"] = 0;
         } else {
             $this->attributes["flag_draft"] = ($this->attributes["flag_draft"]) ? "1" : "0";
         }
-//        $this->attributes["flag_draft"] = $this->attributes["flag_draft"] ?? '0';
+
+        $this->attributes["description_long"] = strip_tags($this->attributes["description_long"], '<a><b><i><strike>');
+
+        if (! (bool)strtotime($this->attributes["published_date"])) {
+            throw new \Exception("Исправьте дату!", 500);
+        }
     }
 }

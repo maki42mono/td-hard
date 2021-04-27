@@ -1,4 +1,8 @@
 <div class="container b-news">
+    <div class="b-news__add-buttons">
+        <button type="button" @click="addNews(false)" class="btn btn-success">Добавить пустую</button>
+        <button type="button" @click="addNews(true)" class="btn btn-primary">Добавить и редактировать</button>
+    </div>
     <div v-for="newsItem in news" class="b-news__item row">
         <div class="row gx-5">
             <div class="col-6 b-news-item__striped">
@@ -23,5 +27,4 @@
         <button type="button" @click="addNews(false)" class="btn btn-success">Добавить пустую</button>
         <button type="button" @click="addNews(true)" class="btn btn-primary">Добавить и редактировать</button>
     </div>
-
 </div>

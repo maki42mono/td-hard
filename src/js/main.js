@@ -10,7 +10,6 @@ const app = new Vue({
         hasLoadedImage: false,
         uploadedImage: null,
         allNewsCount: null,
-        //todo: получать с бекенда
         newsOnPage: 4,
         pagesCount: 1,
         activePage: 1,
@@ -31,23 +30,33 @@ const app = new Vue({
                 },
                 body: JSON.stringify({page: this.activePage - 1})
             };
-            const response = await fetch("/getData", requestOptions);
+            // var that = this;
+            // const response = await fetch("/getData", requestOptions);
+            fetch("/getData", requestOptions)
+                .then(async response => {
+                    var data = await response.json();
 
-            if (response.status != 200) {
-                return false;
-            }
+                    if (!response.ok) {
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    }
 
-            var data = await response.json();
-
-            data.news.forEach(e => {
-                e.sortId = sortId++;
-            });
-            this.news = data.news;
-            this.allNewsCount = data.allNewsCount;
-            this.pagesCount = Math.ceil(this.allNewsCount / this.newsOnPage);
-            if (this.pagesCount == 0) {
-                this.pagesCount = 1;
-            }
+                    data.news.forEach(e => {
+                        e.sortId = sortId++;
+                    });
+                    this.news = data.news;
+                    this.newsOnPage = data.newsOnPage;
+                    console.log(this.newsOnPage);
+                    this.allNewsCount = data.allNewsCount;
+                    this.pagesCount = Math.ceil(this.allNewsCount / this.newsOnPage);
+                    if (this.pagesCount == 0) {
+                        this.pagesCount = 1;
+                    }
+                })
+                .catch(error => {
+                    // this.errorMessage = error;
+                    console.error('There was an error!', error);
+                });
         },
         addNews: function (addAndEdit = false) {
             this.newsItemEditable = {
@@ -88,7 +97,7 @@ const app = new Vue({
         },
         async saveModal() {
             if (await this.saveNewsItem()) {
-                app.closeModal();
+                this.closeModal();
             }
         },
         async saveNewsItem () {
@@ -100,33 +109,44 @@ const app = new Vue({
                 },
                 body: JSON.stringify({newsData: that.newsItemEditable, hasNewImage: this.hasLoadedImage})
             };
-            const response = await fetch("/saveData", requestOptions);
-            //todo: делать красивее
-            if (response.status != 200) {
-                return false
-            }
+            var res = fetch("/saveData", requestOptions)
+                .then(async response => {
+                    var data = await response.json();
 
-            var savedNews = await response.json();
-            if (! this.isNewItem) {
-                this.addItemToNewsCollection(savedNews);
-            } else if (this.activePage < this.pagesCount) {
-                this.activePage = this.pagesCount;
-                await this.getNews();
-                this.isNewItem = false;
-                return true;
-            } else if (this.activePage == this.pagesCount) {
-                if (this.news.length < this.newsOnPage) {
-                    this.addItemToNewsCollection(savedNews);
-                } else {
-                    this.pagesCount++;
-                    this.allNewsCount = 1;
-                    this.activePage = this.pagesCount;
-                    this.news = [savedNews];
-                }
-            }
+                    if (!response.ok || data.error != undefined) {
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(data.error);
+                    }
 
-            this.isNewItem = false;
-            return true;
+                    var savedNews = data;
+
+                    if (! that.isNewItem) {
+                        that.addItemToNewsCollection(savedNews);
+                    } else if (that.activePage < that.pagesCount) {
+                        that.activePage = that.pagesCount;
+                        await that.getNews();
+                        that.isNewItem = false;
+                        return true;
+                    } else if (that.activePage == that.pagesCount) {
+                        if (that.news.length < that.newsOnPage) {
+                            that.addItemToNewsCollection(savedNews);
+                        } else {
+                            that.pagesCount++;
+                            that.allNewsCount = 1;
+                            that.activePage = that.pagesCount;
+                            that.news = [savedNews];
+                        }
+                    }
+
+                    that.isNewItem = false;
+                    return true;
+                })
+                .catch(error => {
+                    alert("Ошибка при сохранении формы: " + error.message);
+                    return false;
+                });
+
+            return res;
         },
         addItemToNewsCollection: function (newsItem) {
             this.news = this.news.filter(obj => obj.id != newsItem.id);
@@ -139,6 +159,7 @@ const app = new Vue({
         },
         closeModal: function () {
             var modal = this.$refs['modal'];
+            console.log(modal);
             this.hasLoadedImage = false;
             modal.close();
         },
