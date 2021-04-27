@@ -1,3 +1,8 @@
+<?php
+/*
+ * Представление списка новостей
+ * */
+?>
 <div class="container b-news">
     <div class="b-news__add-buttons">
         <button type="button" @click="addNews(false)" class="btn btn-success">Добавить пустую</button>
