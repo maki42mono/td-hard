@@ -65,6 +65,7 @@ const app = new Vue({
                 sortId: sortId++,
             };
             this.isNewItem = true;
+            //todo: найти баг, когда на последней странице еще есть элементы, ты стоишь на 1-й, и новый добавляется на предпоследнюю страницу
             if (addAndEdit) {
                 var modal = this.$refs['modal'];
                 modal.showModal();
