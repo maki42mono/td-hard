@@ -18,17 +18,26 @@ const app = new Vue({
         isLoading: false,
     },
     async created () {
+        await this.getNewsCount();
         await this.getNews();
     },
     methods: {
         async getNews() {
             this.isLoading = true;
+            var page = this.activePage;
+            if (this.isNewItem) {
+                page = this.pagesCount;
+                if (Math.ceil(this.allNewsCount / this.newsOnPage) > this.pagesCount) {
+                    page = this.pagesCount + 1;
+                }
+            }
+
             const requestOptions = {
                 method: "POST",
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
-                body: JSON.stringify({page: this.activePage - 1})
+                body: JSON.stringify({page: page - 1})
             };
 
             await fetch("/getData", requestOptions)
@@ -48,13 +57,11 @@ const app = new Vue({
                     this.fileMaxSizeMB = data.fileMaxSizeMB;
                     this.allNewsCount = data.allNewsCount;
                     this.pagesCount = Math.ceil(this.allNewsCount / this.newsOnPage);
-                    // console.log("PAGES ON GET" + this.pagesCount);
                     if (this.pagesCount == 0) {
                         this.pagesCount = 1;
                     }
                 })
                 .catch(error => {
-                    // this.errorMessage = error;
                     alert('Ошибка при запросе данных! ' + error.message);
                 });
 
@@ -128,20 +135,12 @@ const app = new Vue({
 
                     if (! that.isNewItem) {
                         that.addItemToNewsCollection(savedNews);
-                    } else if (that.activePage < that.pagesCount) {
-                        //todo: вот тут поправить, когда создается новая страница
+                    } else {
+                        await that.getNewsCount();
                         await that.getNews();
+
                         that.activePage = that.pagesCount;
-                        that.isNewItem = false;
-                    } else if (that.activePage == that.pagesCount) {
-                        if (that.news.length < that.newsOnPage) {
-                            that.addItemToNewsCollection(savedNews);
-                        } else {
-                            that.pagesCount++;
-                            that.allNewsCount = 1;
-                            that.activePage = that.pagesCount;
-                            that.news = [savedNews];
-                        }
+
                     }
 
                     that.isNewItem = false;
@@ -155,6 +154,20 @@ const app = new Vue({
             that.isLoading = false;
 
             return res;
+        },
+        async getNewsCount() {
+            const requestOptions = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            };
+
+            await fetch("/getNewsCount", requestOptions)
+                .then(async response => {
+                    var data = await response.json();
+                    this.allNewsCount = data.allNewsCount;
+                });
         },
         addItemToNewsCollection: function (newsItem) {
             this.news = this.news.filter(obj => obj.id != newsItem.id);

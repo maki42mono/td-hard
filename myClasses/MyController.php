@@ -124,6 +124,13 @@ class MyController
         ]);
     }
 
+    private static function actionGetNewsCount()
+    {
+        echo json_encode([
+            "allNewsCount" => NewsModel::getTotalCount(),
+        ]);
+    }
+
     private static function runMyView($view_name)
     {
         $path = self::VIEW_PATH . "/{$view_name}.php";
