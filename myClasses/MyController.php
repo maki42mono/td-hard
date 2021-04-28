@@ -17,7 +17,6 @@ class MyController
         try {
             Registry::instance();
         } catch (\Exception $e) {
-//            throw new \Exception($e->getMessage(), 500);
             echo json_encode(array(
                 'error' => array(
                     'code' => $e->getCode(),
@@ -121,6 +120,13 @@ class MyController
             "allNewsCount" => NewsModel::getTotalCount(),
             "newsOnPage" => self::ITEMS_ON_PAGINATOR_PAGE,
             "fileMaxSizeMB" => File::MAX_SIZE_MB,
+        ]);
+    }
+
+    private static function actionGetNewsCount()
+    {
+        echo json_encode([
+            "allNewsCount" => NewsModel::getTotalCount(),
         ]);
     }
 

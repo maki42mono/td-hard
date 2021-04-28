@@ -14,7 +14,6 @@ class Registry
 
     private function __construct()
     {
-
         try {
             $this->getConf();
 

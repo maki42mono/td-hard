@@ -15,24 +15,32 @@ const app = new Vue({
         activePage: 1,
         isNewItem: false,
         fileMaxSizeMB: 5,
+        isLoading: false,
     },
     async created () {
-        const data = await this.getNews();
-        // сортируем новости, чтобы при добавлении новых оставлять текущий порадок без запросов к бд
-
-
+        await this.getNewsCount();
+        await this.getNews();
     },
     methods: {
         async getNews() {
+            this.isLoading = true;
+            var page = this.activePage;
+            if (this.isNewItem) {
+                page = this.pagesCount;
+                if (Math.ceil(this.allNewsCount / this.newsOnPage) > this.pagesCount) {
+                    page = this.pagesCount + 1;
+                }
+            }
+
             const requestOptions = {
                 method: "POST",
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
-                body: JSON.stringify({page: this.activePage - 1})
+                body: JSON.stringify({page: page - 1})
             };
 
-            fetch("/getData", requestOptions)
+            await fetch("/getData", requestOptions)
                 .then(async response => {
                     var data = await response.json();
 
@@ -54,9 +62,10 @@ const app = new Vue({
                     }
                 })
                 .catch(error => {
-                    // this.errorMessage = error;
                     alert('Ошибка при запросе данных! ' + error.message);
                 });
+
+            this.isLoading = false;
         },
         addNews: function (addAndEdit = false) {
             this.newsItemEditable = {
@@ -80,6 +89,7 @@ const app = new Vue({
             modal.showModal();
         },
         async deleteNews(e) {
+            this.isLoading = true;
             const requestOptions = {
                 method: "POST",
                 headers: {
@@ -104,6 +114,7 @@ const app = new Vue({
         },
         async saveNewsItem () {
             var that = this;
+            that.isLoading = true;
             const requestOptions = {
                 method: "POST",
                 headers: {
@@ -111,7 +122,7 @@ const app = new Vue({
                 },
                 body: JSON.stringify({newsData: that.newsItemEditable, hasNewImage: this.hasLoadedImage})
             };
-            var res = fetch("/saveData", requestOptions)
+            var res = await fetch("/saveData", requestOptions)
                 .then(async response => {
                     var data = await response.json();
 
@@ -124,20 +135,12 @@ const app = new Vue({
 
                     if (! that.isNewItem) {
                         that.addItemToNewsCollection(savedNews);
-                    } else if (that.activePage < that.pagesCount) {
-                        that.activePage = that.pagesCount;
+                    } else {
+                        await that.getNewsCount();
                         await that.getNews();
-                        that.isNewItem = false;
-                        return true;
-                    } else if (that.activePage == that.pagesCount) {
-                        if (that.news.length < that.newsOnPage) {
-                            that.addItemToNewsCollection(savedNews);
-                        } else {
-                            that.pagesCount++;
-                            that.allNewsCount = 1;
-                            that.activePage = that.pagesCount;
-                            that.news = [savedNews];
-                        }
+
+                        that.activePage = that.pagesCount;
+
                     }
 
                     that.isNewItem = false;
@@ -148,7 +151,23 @@ const app = new Vue({
                     return false;
                 });
 
+            that.isLoading = false;
+
             return res;
+        },
+        async getNewsCount() {
+            const requestOptions = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            };
+
+            await fetch("/getNewsCount", requestOptions)
+                .then(async response => {
+                    var data = await response.json();
+                    this.allNewsCount = data.allNewsCount;
+                });
         },
         addItemToNewsCollection: function (newsItem) {
             this.news = this.news.filter(obj => obj.id != newsItem.id);
