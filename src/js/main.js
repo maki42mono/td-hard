@@ -15,15 +15,14 @@ const app = new Vue({
         activePage: 1,
         isNewItem: false,
         fileMaxSizeMB: 5,
+        isLoading: false,
     },
     async created () {
-        const data = await this.getNews();
-        // сортируем новости, чтобы при добавлении новых оставлять текущий порадок без запросов к бд
-
-
+        await this.getNews();
     },
     methods: {
         async getNews() {
+            this.isLoading = true;
             const requestOptions = {
                 method: "POST",
                 headers: {
@@ -32,7 +31,7 @@ const app = new Vue({
                 body: JSON.stringify({page: this.activePage - 1})
             };
 
-            fetch("/getData", requestOptions)
+            await fetch("/getData", requestOptions)
                 .then(async response => {
                     var data = await response.json();
 
@@ -49,6 +48,7 @@ const app = new Vue({
                     this.fileMaxSizeMB = data.fileMaxSizeMB;
                     this.allNewsCount = data.allNewsCount;
                     this.pagesCount = Math.ceil(this.allNewsCount / this.newsOnPage);
+                    // console.log("PAGES ON GET" + this.pagesCount);
                     if (this.pagesCount == 0) {
                         this.pagesCount = 1;
                     }
@@ -57,6 +57,8 @@ const app = new Vue({
                     // this.errorMessage = error;
                     alert('Ошибка при запросе данных! ' + error.message);
                 });
+
+            this.isLoading = false;
         },
         addNews: function (addAndEdit = false) {
             this.newsItemEditable = {
@@ -80,6 +82,7 @@ const app = new Vue({
             modal.showModal();
         },
         async deleteNews(e) {
+            this.isLoading = true;
             const requestOptions = {
                 method: "POST",
                 headers: {
@@ -104,6 +107,7 @@ const app = new Vue({
         },
         async saveNewsItem () {
             var that = this;
+            that.isLoading = true;
             const requestOptions = {
                 method: "POST",
                 headers: {
@@ -111,7 +115,7 @@ const app = new Vue({
                 },
                 body: JSON.stringify({newsData: that.newsItemEditable, hasNewImage: this.hasLoadedImage})
             };
-            var res = fetch("/saveData", requestOptions)
+            var res = await fetch("/saveData", requestOptions)
                 .then(async response => {
                     var data = await response.json();
 
@@ -125,10 +129,10 @@ const app = new Vue({
                     if (! that.isNewItem) {
                         that.addItemToNewsCollection(savedNews);
                     } else if (that.activePage < that.pagesCount) {
-                        that.activePage = that.pagesCount;
+                        //todo: вот тут поправить, когда создается новая страница
                         await that.getNews();
+                        that.activePage = that.pagesCount;
                         that.isNewItem = false;
-                        return true;
                     } else if (that.activePage == that.pagesCount) {
                         if (that.news.length < that.newsOnPage) {
                             that.addItemToNewsCollection(savedNews);
@@ -147,6 +151,8 @@ const app = new Vue({
                     alert("Ошибка при сохранении формы: " + error.message);
                     return false;
                 });
+
+            that.isLoading = false;
 
             return res;
         },

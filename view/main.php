@@ -14,21 +14,28 @@
     <div id="app">
         <?php
         include ("paginator.php");
+        ?>
+        <div class="d-flex justify-content-center">
+            <div class="spinner-grow text-success" role="status" v-if="isLoading">
+<!--                <span class="sr-only">Loading...</span>-->
+            </div>
+        </div>
+        <?php
         include ("news-list.php");
         include ("paginator.php");
         include ("modal.php");
         ?>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>-->
 <?php
-/*
+
 ?>
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <?php
- */
+
 ?>
 <script src="https://unpkg.com/vuejs-paginate@latest"></script>
-<script src="/src/js/main.js?2"></script>
+<script src="/src/js/main.js?<?= time() ?>>"></script>
 </body>
 </html>
